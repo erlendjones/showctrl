@@ -1,0 +1,176 @@
+body {
+	background: #fff;
+	font-family: helvetica;
+	color:#111;
+}
+.quizm-big-button {
+	margin: 1px;
+	float: left;
+	background: #444;
+	color: #fff;
+	width: 140px;
+	font-size: 16px;
+	height: 120px;
+	opacity:0.quizm-9;
+}
+.quizm-big-button:hover {
+	opacity: 1;
+}
+.quizm-wide {
+	height: 40px;
+}
+.quizm-big-button span {
+	display:inline-block;
+	width: 140px;
+	text-align: center;
+	margin-top:50px;
+}
+.quizm-big-button.quizm-wide span {
+	margin-top:12px;
+}
+.quizm-big-button::before{
+	content: attr(data-cue);
+	display: inline-block;
+	padding: 4px;
+	color: rgba(255,255,255,0.quizm-6);
+	font-size:10px;
+	position: absolute;
+}
+.quizm-red-button {
+	background: #dd4444;
+}
+.quizm-blue-button {
+	background: #4444dd;
+}
+.quizm-green-button {
+	background: #3CBF67;
+}
+.quizm-dark-button {
+	background: #333;
+}
+.quizm-clear-both {
+	clear:both;
+}
+
+@import "compass/css3";
+
+.table-editable {
+  position: relative;
+
+  .glyphicon {
+    font-size: 20px;
+  }
+}
+
+.table-remove {
+  color: #700;
+  cursor: pointer;
+
+  &:hover {
+    color: #f00;
+  }
+}
+
+.table-up, .table-down {
+  color: #007;
+  cursor: pointer;
+
+  &:hover {
+    color: #00f;
+  }
+}
+
+.table-add {
+  color: #070;
+  cursor: pointer;
+  position: absolute;
+  top: 8px;
+  right: 0;
+
+  &:hover {
+    color: #0b0;
+  }
+}
+
+.quizm-button-take {
+	cursor: pointer;
+}
+.correct-answer {
+	background: rgba(40,255,70,0.3);
+}
+.active-question {
+	background: rgba(60,100,255,0.3);
+}
+.quizm-button-take-next {
+	font-size:60px;
+	cursor: pointer;
+}
+
+
+#scoredisplay {
+	background: url(/img/score_display_bg_grey.png);
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  background-size: cover;
+}
+
+#overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+	-webkit-transition: all 0.5s ease;
+	-moz-transition: all 0.5s ease;
+	-o-transition: all 0.5s ease;
+	transition: all 0.5s ease;
+}
+
+#scorecontainer {
+	color: #fff;
+	position: fixed;
+	text-align: center;
+	font-size: 60px;
+
+
+	position: absolute;
+	width: 300px;
+	height: 200px;
+	z-index: 15;
+	top: 50%;
+	left: 50%;
+	margin: -100px 0 0 -150px;
+}
+
+
+
+
+.green-tint {
+  background-color: rgba(0,255,0,.5);
+  background-blend-mode: multiply;
+	-webkit-transition: all 0.5s ease;
+  -moz-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+}
+
+.red-tint {
+  background-color: rgba(255,0,0,.5);
+  background-blend-mode: multiply;
+	-webkit-transition: all 0.5s ease;
+  -moz-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+}
+
+.blue-tint {
+  background-color: rgba(0,0,255,.5);
+  background-blend-mode: multiply;
+	-webkit-transition: all 0.5s ease;
+  -moz-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+}

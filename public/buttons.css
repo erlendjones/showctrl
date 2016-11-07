@@ -1,0 +1,53 @@
+body {
+	background: #111;
+	font-family: helvetica;
+	color:#fff;
+}
+.big-button {
+	margin: 1px;
+	float: left;
+	background: #444;
+	color: #fff;
+	width: 140px;
+	font-size: 16px;
+	height: 120px;
+	opacity:0.9;
+}
+.big-button:hover {
+	opacity: 1;
+}
+.wide {
+	height: 40px;
+}
+.big-button span {
+	display:inline-block;
+	width: 140px;
+	text-align: center;
+	margin-top:50px;
+}
+.big-button.wide span {
+	margin-top:12px;
+}
+.big-button::before{
+	content: attr(data-cue);
+	display: inline-block;
+	padding: 4px;
+	color: rgba(255,255,255,0.6);
+	font-size:10px;
+	position: absolute;
+}
+.red-button {
+	background: #dd4444;
+}
+.blue-button {
+	background: #4444dd;
+}
+.green-button {
+	background: #3CBF67;
+}
+.dark-button {
+	background: #333;
+}
+.clear-both {
+	clear:both;
+}

@@ -1,0 +1,82 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "show-control",
+        "scope": null,
+        "escapedName": "show-control",
+        "name": "show-control",
+        "rawSpec": "",
+        "spec": "latest",
+        "type": "tag"
+      },
+      "/Users/erlendjones/app/showctrl"
+    ]
+  ],
+  "_from": "show-control@latest",
+  "_id": "show-control@1.0.1",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/show-control",
+  "_nodeVersion": "0.10.40",
+  "_npmUser": {
+    "name": "erlend.jones",
+    "email": "erlend.jones@gmail.com"
+  },
+  "_npmVersion": "2.14.4",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "show-control",
+    "scope": null,
+    "escapedName": "show-control",
+    "name": "show-control",
+    "rawSpec": "",
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "#USER"
+  ],
+  "_resolved": "https://registry.npmjs.org/show-control/-/show-control-1.0.1.tgz",
+  "_shasum": "ae0f904ccbf6187e469def74e31728c5dcd183a6",
+  "_shrinkwrap": null,
+  "_spec": "show-control",
+  "_where": "/Users/erlendjones/app/showctrl",
+  "author": {
+    "name": "Erlend Jones",
+    "email": "erlend.jones@gmail.com"
+  },
+  "dependencies": {
+    "express": "^4.13.3",
+    "mysql": "^2.12.0",
+    "node-osc": "^1.1.0",
+    "socket.io": "^1.3.7",
+    "telnet-client": "^0.2.1"
+  },
+  "description": "A remote control for multiple telnet- and OSC-servers, making an easy UI to trigger multiple actions simultaneously.",
+  "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-preset-es2015": "^6.18.0"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "ae0f904ccbf6187e469def74e31728c5dcd183a6",
+    "tarball": "https://registry.npmjs.org/show-control/-/show-control-1.0.1.tgz"
+  },
+  "license": "ISC",
+  "main": "app.js",
+  "maintainers": [
+    {
+      "name": "erlend.jones",
+      "email": "erlend.jones@gmail.com"
+    }
+  ],
+  "name": "show-control",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "scripts": {
+    "build": "babel src -d lib",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "1.0.1"
+}
