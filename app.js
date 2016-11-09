@@ -20,16 +20,16 @@ const config = {
     database : 'gameshow'
   },
   carboniteConnection: {
-    host:     '192...'
+    host:     '192.168.1.136'
   },
   xpressionConnection: {
-    host:     '192...'
+    host:     '192.168.1.123'
   },
   maConnection: {
     host:     '192...'
   },
   qlabConnection: {
-    host:     '192...'
+    host:     '192.168.1.113'
   }
 }
 
@@ -370,9 +370,9 @@ io.on('connection', function (socket) {
 
 //// REMOTE CONNECTIONS ////
 var runMa = false;
-var runCarbonite = false;
+var runCarbonite = true;
 var runXpression= false;
-var runQlab = false;
+var runQlab = true;
 
 
 // QLAB REMOTE
@@ -432,7 +432,7 @@ if (runCarbonite){
 			console.log('CARBONITE-connection error');
 		});
 
-		carboniteClient.connect({ host: config.carboniteConnection.host || '192.168.1.5', port: config.carboniteConnection.port || 7788, timeout: 'infinite' });
+		carboniteClient.connect({ host: config.carboniteConnection.host || '192.168.1.5', port: config.carboniteConnection.port || 7788, timeout: 0 });
 	} catch (err) {console.log(err);};
 }
 
@@ -502,7 +502,7 @@ var runCue = function(cueNumber){
 
   if (runXpression){
 		try {
-			xpressionClient.exec('?????:'+cueNumber, function(response) {
+			xpressionClient.exec('SEQI '+cueNumber+':1', function(response) {
 				console.log(response);
 			});
 		} catch (err) {console.log(err); };

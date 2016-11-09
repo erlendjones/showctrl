@@ -68,7 +68,7 @@
 		});
 		*/
 
-		$("#"+containerId).children().unbind('touchstart').bind('touchstart', function(button){
+		$("#"+containerId).children().unbind(window.touchdown || 'touchstart').bind(window.touchdown || 'touchstart', function(button){
 			if ($(this).data('cue') != null){
 				socket.emit('run cue', $(this).data('cue'), function(res){
 					console.log(res);
