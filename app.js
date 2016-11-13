@@ -71,6 +71,58 @@ function setXpressionField(field, value, callback){
   })
 }
 
+function getXpressionField(field, callback){
+  mysqlCon.query('SELECT * FROM xpressiondata WHERE key_value = ?', [ field ], function(err, res){
+    if (typeof callback == 'function' && typeof res[0] !== 'undefined' && typeof res[0].value !== 'undefined'){
+      callback(res[0].value);
+    };
+  })
+}
+
+
+function updateDataInDatabase(){
+  setXpressionField('score_a',  score.values['a'], function(err){
+    console.log(err);
+  });
+  setXpressionField('score_b',  score.values['b'], function(err){
+    console.log(err);
+  });
+  setXpressionField('score_c',  score.values['c'], function(err){
+    console.log(err);
+  });
+  setXpressionField('score_d',  score.values['d'], function(err){
+    console.log(err);
+  });
+
+  /// DUEL DATA
+  var left_team = toggables['duel-set-left'];
+  var right_team = toggables['duel-set-right'];
+  setXpressionField('duel_left_score', duel.left.score, function(err){  //LEFT
+    console.log(err);
+  });
+  getXpressionField('name_'+left_team, function(value){
+    console.log('name left team', value);
+    setXpressionField('duel_left_name',  value, function(err){
+      console.log(err);
+    });
+  })
+  setXpressionField('duel_left_total_score', score.values[left_team], function(err){
+    console.log(err);
+  });
+
+  setXpressionField('duel_right_score', duel.right.score, function(err){ // RIGHT
+    console.log(err);
+  });
+  getXpressionField('name_'+right_team, function(value){
+    console.log('name right team', value);
+    setXpressionField('duel_right_name',  value, function(err){
+      console.log(err);
+    });
+  });
+  setXpressionField('duel_right_total_score', score.values[right_team], function(err){
+    console.log(err);
+  });
+}
 
 // USER INTERFACE
 server.listen(config.port, function () {
@@ -121,15 +173,18 @@ var score = {
 
 var duel = {
   left: {
-    player: 'a',
     score: 0
     // derived total_score
   },
   right: {
-    player: 'b',
     score: 0
     // derived total_score
   }
+}
+
+var toggables = {
+  sometoggableid: true,
+  someOthertoggableid: false,
 }
 
 
@@ -242,6 +297,25 @@ io.on('connection', function (socket) {
 		}
 	});
 
+  socket.on('toggable change',function(msg){
+    toggables[msg.id] = toggables[msg.id] == true ? false : true;
+    io.sockets.emit('toggable change', {
+      id: msg.id,
+      active: toggables[msg.id]
+    });
+    updateDataInDatabase();
+	});
+
+  socket.on('toggable group change',function(msg){
+    console.log('toggable group change:',msg);
+    toggables[msg.group] = msg.id;
+    io.sockets.emit('toggable group change', {
+      group: msg.group,
+      active: msg.id
+    });
+    updateDataInDatabase();
+	});
+
 	socket.on('run cue', function (cueNumber) {
 		runCue(cueNumber);
 	});
@@ -342,6 +416,22 @@ io.on('connection', function (socket) {
     console.log('score control', msg);
     var actionObj = msg.action.split(':');
     var action = actionObj[0];
+    if (action == 'duel inc left'){
+      duel.left.score = duel.left.score + 1;
+      callback(null);
+    }
+    if (action == 'duel inc right'){
+      duel.right.score = duel.right.score + 1;
+      callback(null);
+    }
+    if (action == 'duel dec left'){
+      duel.left.score = duel.left.score - 1;
+      callback(null);
+    }
+    if (action == 'duel dec right'){
+      duel.right.score = duel.right.score - 1;
+      callback(null);
+    }
     if (action == 'inc score'){
       score.values[actionObj[1]] = score.values[actionObj[1]] + score.changeAmount;
       io.sockets.emit('update scores', score);
@@ -366,6 +456,21 @@ io.on('connection', function (socket) {
       _settleScoreFromQuestion('d');
       io.sockets.emit('update scores', score);
     }
+    if (action == 'robbery execute'){
+      _swapScoreFromChallenge(toggables['robbery-set-thief'], toggables['robbery-set-victim'], parseInt(actionObj[1]));
+      io.sockets.emit('update scores', score);
+    }
+    if (action == 'robbery undo execute'){
+      _swapScoreFromChallenge(toggables['robbery-set-victim'], toggables['robbery-set-thief'], parseInt(actionObj[1]));
+      io.sockets.emit('update scores', score);
+    }
+    if (action == 'challenge settle score'){
+      _settleScoreFromChallenge('a');
+      _settleScoreFromChallenge('b');
+      _settleScoreFromChallenge('c');
+      _settleScoreFromChallenge('d');
+      io.sockets.emit('update scores', score);
+    }
     if (action == 'open tap'){
       score.tapOpen = ['a','b','c','d'];
       io.sockets.emit('open tap', null);
@@ -380,6 +485,7 @@ io.on('connection', function (socket) {
         team: actionObj[1]
       });
     }
+    updateDataInDatabase();
   });
 
   _settleScoreFromQuestion = function(team){
@@ -388,6 +494,17 @@ io.on('connection', function (socket) {
     }else{
       score.values[team] = score.values[team] - score.changeAmount;
     }
+  }
+
+  _settleScoreFromChallenge = function(team){
+    if (toggables['challenge-inc-score-'+team] == true){
+      score.values[team] = score.values[team] + toggables['challenge-set-score-change-amount'];
+    }
+  }
+
+  _swapScoreFromChallenge = function(thief,victim,amount){
+    score.values[thief] = score.values[thief] + amount;
+    score.values[victim] = score.values[victim] - amount;
   }
 
 

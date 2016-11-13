@@ -51,25 +51,25 @@
 		];
 
 		var challengeControl = [
-			{ label: 'A+', scoreControl: 'challenge toggle inc score:a', },
-			{ label: 'B+', scoreControl: 'challenge toggle inc score:b', },
-			{ label: 'C+', scoreControl: 'challenge toggle inc score:c', },
-			{ label: 'D+', scoreControl: 'challenge toggle inc score:d', },
-			{ label: 'CHANGE 1', scoreControl: 'challenge set score change amount:1', toggleGroup: 'a' },
-			{ label: 'CHANGE 100', scoreControl: 'challenge set score change amount:100', toggleGroup: 'a' },
-			{ label: 'CHANGE 300', scoreControl: 'challenge set score change amount:300', toggleGroup: 'a' },
+			{ label: 'A+', scoreControl: 'challenge toggle inc score:a', toggableid: 'challenge-inc-score-a' },
+			{ label: 'B+', scoreControl: 'challenge toggle inc score:b', toggableid: 'challenge-inc-score-b' },
+			{ label: 'C+', scoreControl: 'challenge toggle inc score:c', toggableid: 'challenge-inc-score-c' },
+			{ label: 'D+', scoreControl: 'challenge toggle inc score:d', toggableid: 'challenge-inc-score-d' },
+			{ label: 'CHANGE 1', toggableid: '1', toggablegroup: 'challenge-set-score-change-amount' },
+			{ label: 'CHANGE 100', toggableid: '100', toggablegroup: 'challenge-set-score-change-amount' },
+			{ label: 'CHANGE 300', toggableid: '300', toggablegroup: 'challenge-set-score-change-amount' },
 			{ label: 'PUSH', scoreControl: 'challenge settle score', style: 'blue-button' },
 		];
 
 		var duelControl = [
-			{ label: 'SET A as LEFT', scoreControl: 'duel set left a', style: 'pink-button' },
-			{ label: 'SET B as LEFT', scoreControl: 'duel set left b', style: 'pink-button' },
-			{ label: 'SET C as LEFT', scoreControl: 'duel set left c', style: 'pink-button' },
-			{ label: 'SET D as LEFT', scoreControl: 'duel set left d', style: 'pink-button' },
-			{ label: 'SET A as RIGHT', scoreControl: 'duel set right a', style: 'orange-button' },
-			{ label: 'SET B as RIGHT', scoreControl: 'duel set right b', style: 'orange-button' },
-			{ label: 'SET C as RIGHT', scoreControl: 'duel set right c', style: 'orange-button' },
-			{ label: 'SET D as RIGHT', scoreControl: 'duel set right d', style: 'orange-button' },
+			{ label: 'SET A as LEFT', style: 'pink-button', toggableid: 'a', toggablegroup: 'duel-set-left' },
+			{ label: 'SET B as LEFT', style: 'pink-button', toggableid: 'b', toggablegroup: 'duel-set-left' },
+			{ label: 'SET C as LEFT', style: 'pink-button', toggableid: 'c', toggablegroup: 'duel-set-left' },
+			{ label: 'SET D as LEFT', style: 'pink-button', toggableid: 'd', toggablegroup: 'duel-set-left' },
+			{ label: 'SET A as RIGHT',  style: 'orange-button', toggableid: 'a', toggablegroup: 'duel-set-right' },
+			{ label: 'SET B as RIGHT',  style: 'orange-button', toggableid: 'b', toggablegroup: 'duel-set-right' },
+			{ label: 'SET C as RIGHT',  style: 'orange-button', toggableid: 'c', toggablegroup: 'duel-set-right' },
+			{ label: 'SET D as RIGHT',  style: 'orange-button', toggableid: 'd', toggablegroup: 'duel-set-right' },
 			{ label: 'LEFT +', scoreControl: 'duel inc left', style: 'green-button' },
 			{ label: 'LEFT -', scoreControl: 'duel dec left', style: 'red-button' },
 			{ label: 'RIGHT +', scoreControl: 'duel inc right', style: 'green-button' },
@@ -77,16 +77,16 @@
 		];
 
 		var robberyControl = [
-			{ label: 'SET A as THIEF', scoreControl: 'robbery set thief a', style: 'orange-button' },
-			{ label: 'SET B as THIEF', scoreControl: 'robbery set thief b', style: 'orange-button' },
-			{ label: 'SET C as THIEF', scoreControl: 'robbery set thief c', style: 'orange-button' },
-			{ label: 'SET D as THIEF', scoreControl: 'robbery set thief d', style: 'orange-button' },
-			{ label: 'SET A as VICTIM', scoreControl: 'robbery set victim a', style: 'green-button' },
-			{ label: 'SET B as VICTIM', scoreControl: 'robbery set victim b', style: 'green-button' },
-			{ label: 'SET C as VICTIM', scoreControl: 'robbery set victim c', style: 'green-button' },
-			{ label: 'SET D as VICTIM', scoreControl: 'robbery set victim d', style: 'green-button' },
+			{ label: 'SET A as THIEF', style: 'orange-button', toggableid: 'a', toggablegroup: 'robbery-set-thief' },
+			{ label: 'SET B as THIEF', style: 'orange-button', toggableid: 'b', toggablegroup: 'robbery-set-thief'  },
+			{ label: 'SET C as THIEF', style: 'orange-button', toggableid: 'c', toggablegroup: 'robbery-set-thief'  },
+			{ label: 'SET D as THIEF', style: 'orange-button', toggableid: 'd', toggablegroup: 'robbery-set-thief'  },
+			{ label: 'SET A as VICTIM',  style: 'green-button', toggableid: 'a', toggablegroup: 'robbery-set-victim'  },
+			{ label: 'SET B as VICTIM',  style: 'green-button', toggableid: 'b', toggablegroup: 'robbery-set-victim'  },
+			{ label: 'SET C as VICTIM',  style: 'green-button', toggableid: 'c', toggablegroup: 'robbery-set-victim'  },
+			{ label: 'SET D as VICTIM',  style: 'green-button', toggableid: 'd', toggablegroup: 'robbery-set-victim'  },
 			{ label: 'ROB!', scoreControl: 'robbery execute:100', style: 'red-button' },
-			{ label: 'UNDO ROB', scoreControl: 'robbery execute' },
+			{ label: 'UNDO ROB', scoreControl: 'robbery undo execute:100' },
 		];
 
 		var voteControl = [
@@ -208,26 +208,6 @@
 						label: 'KEY AV',
 						cue: 21,
 						style: 'red-button'
-					},
-					{
-						label: 'A+',
-						cue: 22,
-						style: 'blue-button'
-					},
-					{
-						label: 'A-',
-						cue: 23,
-						style: 'blue-button'
-					},
-					{
-						label: 'B+',
-						cue: 24,
-						style: 'blue-button'
-					},
-					{
-						label: 'B-',
-						cue: 25,
-						style: 'blue-button'
 					}
 				]
 			},
@@ -259,7 +239,6 @@
 				name: 'qlab',
 				parent: 'main',
 				content: []
-					.concat(mainCues)
 					.concat(qlab)
 			},
 			{

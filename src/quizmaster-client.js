@@ -11,6 +11,22 @@
 	//Make global for debugging
 	window.socket = socket;
 
+	socket.on('toggable change', function(msg){
+		console.log('toggable change recieved', msg);
+		if (msg.active == true){
+			$('[data-toggableid="'+msg.id+'"]').addClass('toggle-active');
+		}
+		if (msg.active == false){
+			$('[data-toggableid="'+msg.id+'"]').removeClass('toggle-active');
+		}
+	});
+
+	socket.on('toggable group change', function(msg){
+		console.log('toggable group change recieved', msg);
+		$('[data-toggablegroup="'+msg.group+'"]').removeClass('toggle-active');
+		$('[data-toggablegroup="'+msg.group+'"][data-toggableid="'+msg.active+'"]').addClass('toggle-active');
+	});
+
 	var openItemIndex = 0;
 
 	var openItemByIndex = function(index, containerId){
@@ -32,6 +48,10 @@
 			}
 		});
 		$("#"+containerId).html(buttons.join(''));
+
+
+
+
 
 		/*
 		$("#"+containerId).children().unbind('click').bind('click', function(button){
@@ -117,7 +137,6 @@
 					console.log(res);
 				});
 			}
-
 			if ($(this).data('scorecontrol') != null){
 				console.log('running score control');
 				socket.emit('score control', {
@@ -127,6 +146,18 @@
 				});
 				if ($(this).data('toggleGroup') != null){
 					// DO TOGGLE STUFF HERE
+				}
+			}
+			if ($(this).data('toggableid') != null){
+				if ($(this).data('toggablegroup') != null){
+					socket.emit('toggable group change', {
+						group: $(this).data('toggablegroup'),
+						id: $(this).data('toggableid')
+					});
+				}else{
+					socket.emit('toggable change', {
+						id: $(this).data('toggableid')
+					});
 				}
 			}
 		});
@@ -148,6 +179,8 @@
 			(typeof data.cue != 'undefined' ? 'data-cue="'+data.cue+'" ' : '') +
 			(typeof data.qlab != 'undefined' ? 'data-qlab="'+data.qlab+'" ' : '') +
 			(typeof data.xpression != 'undefined' ? 'data-xpression="'+data.xpression+'" ' : '') +
+			(typeof data.toggableid != 'undefined' ? 'data-toggableid="'+data.toggableid+'" ' : '') +
+			(typeof data.toggablegroup != 'undefined' ? 'data-toggablegroup="'+data.toggablegroup+'" ' : '') +
 			(typeof data.section != 'undefined' ? 'data-section="'+data.section+'" ' : '') +
 			(typeof data.vote != 'undefined' ? 'data-vote="'+data.vote+'" ' : '') +
 			(typeof data.voteControl != 'undefined' ? 'data-votecontrol="'+data.voteControl+'" ' : '') +
