@@ -9,7 +9,13 @@ var ma2console = require('ma2-msc');
 
 process.title = 'show-ctrl-server';
 
+//// REMOTE CONNECTIONS ////
+var runMa = true;
+var runCarbonite = true;
+var runXpression= true;
+var runQlab = true;
 
+//// CONFIGURATIONS ////
 const config = {
   port: 8080,
   mysqlConnection: {
@@ -399,19 +405,11 @@ io.on('connection', function (socket) {
 });
 
 
-
-//// REMOTE CONNECTIONS ////
-var runMa = true;
-var runCarbonite = true;
-var runXpression= true;
-var runQlab = true;
-
-
 // QLAB REMOTE
 if (runQlab){
 	try {
 		var qlabClient = new osc.Client(config.qlabConnection.host || '192.168.1.7', config.qlabConnection.port || 53000);
-		console.log('QLAB Connected')
+		console.log('QLAB Connected');
 	} catch (err) { console.log(err); };
 }
 
