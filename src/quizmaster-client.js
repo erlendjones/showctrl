@@ -79,6 +79,11 @@
 					console.log(res);
 				});
 			}
+			if ($(this).data('xpression') != null){
+				socket.emit('run xpression cmd', $(this).data('xpression'), function(res){
+					console.log(res);
+				});
+			}
 			if ($(this).data('section') != null){
 				if (item.target){
 					openItemByName($(this).data('section'), item.target);
@@ -142,6 +147,7 @@
 			(typeof data.style != 'undefined' ? data.style : '')+'" '+
 			(typeof data.cue != 'undefined' ? 'data-cue="'+data.cue+'" ' : '') +
 			(typeof data.qlab != 'undefined' ? 'data-qlab="'+data.qlab+'" ' : '') +
+			(typeof data.xpression != 'undefined' ? 'data-xpression="'+data.xpression+'" ' : '') +
 			(typeof data.section != 'undefined' ? 'data-section="'+data.section+'" ' : '') +
 			(typeof data.vote != 'undefined' ? 'data-vote="'+data.vote+'" ' : '') +
 			(typeof data.voteControl != 'undefined' ? 'data-votecontrol="'+data.voteControl+'" ' : '') +

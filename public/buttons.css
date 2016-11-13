@@ -39,6 +39,12 @@ body {
 .red-button {
 	background: #dd4444;
 }
+.pink-button {
+	background: #dd4480;
+}
+.orange-button {
+	background: #dd6044;
+}
 .blue-button {
 	background: #4444dd;
 }
@@ -50,4 +56,7 @@ body {
 }
 .clear-both {
 	clear:both;
+}
+.break-line {
+	clear: both;
 }

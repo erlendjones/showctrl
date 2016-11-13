@@ -11,23 +11,89 @@
 
 		// BUTTON-COLLECTION
 		var mainCues = [
-			{ label: 'KAM 1', cue: 1	},
-			{ label: 'KAM 2', cue: 2	},
-			{ label: 'CUE', cue: 3	},
-			{ label: 'CUE', cue: 4	},
-			{ label: 'CUE', cue: 5	},
-			{ label: 'CUE', cue: 6	},
-			{ label: 'CUE', cue: 7	},
-			{ label: 'CUE', cue: 8	},
-			{ label: 'CUE', cue: 9	},
-			{ label: 'CUE', cue: 10	},
+			{ label: 'DEL 1', style: 'blue-button break-line'},
+			{ label: 'START RULLETT', cue: 1	},
+			{ label: 'UTFALL 1', xpression:'SEQI 1:1', cue: 51	},
+			{ label: 'UTFALL 2', xpression:'SEQI 1:1', cue: 52	},
+			{ label: 'UTFALL 3', xpression:'SEQI 1:1', cue: 53	},
+			{ label: 'UTFALL 4', xpression:'SEQI 1:1', cue: 54	},
+			{ label: 'UTFALL 5', xpression:'SEQI 1:1', cue: 55	},
+			{ label: 'UTFALL 6', xpression:'SEQI 1:1', cue: 56	},
+			{ label: 'UTFALL 7', xpression:'SEQI 1:1', cue: 57	},
+			{ label: 'UTFALL 8', xpression:'SEQI 1:1', cue: 58	},
+			{ label: 'DEL UT POENG', scoreControl: 'challenge settle score', cue: 2	},
+			{ label: 'DEL 2', style: 'blue-button  break-line'	},
+			{ label: 'INTRO',  cue: 3	},
+			{ label: 'HIGHLIGHT 1', xpression:'SEQI 2:1', scoreControl: 'duel take left', cue: 4 },
+			{ label: 'HIGHLIGHT 2', xpression:'SEQI 3:1', scoreControl: 'duel take right', cue: 5	},
+			{ label: 'LEFT +', scoreControl: 'duel inc left', style: 'green-button', cue:7 },
+			{ label: 'LEFT -', scoreControl: 'duel dec left', style: 'red-button' },
+			{ label: 'RIGHT +', scoreControl: 'duel inc right', style: 'green-button', cue:8 },
+			{ label: 'RIGHT -', scoreControl: 'duel dec right', style: 'red-button' },
+			{ label: 'BYTT POENG', xpression:'SEQI 4:1', scoreControl: 'duel swap', cue: 9	},
+			{ label: 'DEL 3', style: 'blue-button break-line'},
+			{ label: 'OPEN VOTES', xpression:'SEQI 5:1', voteControl: 'open votes:A,B,C,D', cue: 10 },
+			{ label: 'CLOSE VOTES', voteControl: 'close votes', cue: 11 },
+			{ label: 'ROB!', scoreControl: 'robbery execute:100', style: 'red-button', cue:12 },
+			{ label: 'DEL 4', style: 'blue-button break-line'	},
+			{ label: 'ANIMER SCEPTRON', scoreControl: 'animate sceptron', cue:13 },
+			{ label: 'Q: GO+SUPER', xpression:'SEQI 6:1', quizControl: 'show', style: 'green-button', cue: 14 },
+			{ label: 'Q: START+ALT', xpression:'SEQI 7:1', quizControl: 'start and show options', style: 'green-button', cue: 15 },
+			{ label: 'Q: STOP + H.RIKTIG', /*  xpression i app.js - 11-14 inn */ quizControl: 'stop and show correct answer', style: 'green-button', cue: 16 },
+			{ label: 'Q: GI POENG', /*  xpression i app.js  - 11-14 ut og 7 og 6 ut*/ scoreControl: 'settle score', style: 'green-button', cue: 17 },
+			{ label: 'DIM A', /* scoreControl: 'displaydim tgl a',*/ cue:61 },
+			{ label: 'DIM B', /* scoreControl: 'displaydim tgl b',*/ cue:62 },
+			{ label: 'DIM C', /* scoreControl: 'displaydim tgl c',*/ cue:63 },
+			{ label: 'DIM D', /* scoreControl: 'displaydim tgl d',*/ cue:64 },
+			{ label: 'DEL 5', style: 'blue-button break-line' },
+			{ label: 'START FEIRING', xpression:'SEQI 8:1', cue:18 },
+			{ label: 'KJØR RULL', xpression:'SEQI 9:1', cue:19 },
+		];
+
+		var challengeControl = [
+			{ label: 'A+', scoreControl: 'challenge toggle inc score:a', },
+			{ label: 'B+', scoreControl: 'challenge toggle inc score:b', },
+			{ label: 'C+', scoreControl: 'challenge toggle inc score:c', },
+			{ label: 'D+', scoreControl: 'challenge toggle inc score:d', },
+			{ label: 'CHANGE 1', scoreControl: 'challenge set score change amount:1', toggleGroup: 'a' },
+			{ label: 'CHANGE 100', scoreControl: 'challenge set score change amount:100', toggleGroup: 'a' },
+			{ label: 'CHANGE 300', scoreControl: 'challenge set score change amount:300', toggleGroup: 'a' },
+			{ label: 'PUSH', scoreControl: 'challenge settle score', style: 'blue-button' },
+		];
+
+		var duelControl = [
+			{ label: 'SET A as LEFT', scoreControl: 'duel set left a', style: 'pink-button' },
+			{ label: 'SET B as LEFT', scoreControl: 'duel set left b', style: 'pink-button' },
+			{ label: 'SET C as LEFT', scoreControl: 'duel set left c', style: 'pink-button' },
+			{ label: 'SET D as LEFT', scoreControl: 'duel set left d', style: 'pink-button' },
+			{ label: 'SET A as RIGHT', scoreControl: 'duel set right a', style: 'orange-button' },
+			{ label: 'SET B as RIGHT', scoreControl: 'duel set right b', style: 'orange-button' },
+			{ label: 'SET C as RIGHT', scoreControl: 'duel set right c', style: 'orange-button' },
+			{ label: 'SET D as RIGHT', scoreControl: 'duel set right d', style: 'orange-button' },
+			{ label: 'LEFT +', scoreControl: 'duel inc left', style: 'green-button' },
+			{ label: 'LEFT -', scoreControl: 'duel dec left', style: 'red-button' },
+			{ label: 'RIGHT +', scoreControl: 'duel inc right', style: 'green-button' },
+			{ label: 'RIGHT -', scoreControl: 'duel dec right', style: 'red-button' },
+		];
+
+		var robberyControl = [
+			{ label: 'SET A as THIEF', scoreControl: 'robbery set thief a', style: 'orange-button' },
+			{ label: 'SET B as THIEF', scoreControl: 'robbery set thief b', style: 'orange-button' },
+			{ label: 'SET C as THIEF', scoreControl: 'robbery set thief c', style: 'orange-button' },
+			{ label: 'SET D as THIEF', scoreControl: 'robbery set thief d', style: 'orange-button' },
+			{ label: 'SET A as VICTIM', scoreControl: 'robbery set victim a', style: 'green-button' },
+			{ label: 'SET B as VICTIM', scoreControl: 'robbery set victim b', style: 'green-button' },
+			{ label: 'SET C as VICTIM', scoreControl: 'robbery set victim c', style: 'green-button' },
+			{ label: 'SET D as VICTIM', scoreControl: 'robbery set victim d', style: 'green-button' },
+			{ label: 'ROB!', scoreControl: 'robbery execute:100', style: 'red-button' },
+			{ label: 'UNDO ROB', scoreControl: 'robbery execute' },
 		];
 
 		var voteControl = [
-			{ label: 'OPEN A/B', voteControl: 'open votes:A,B', style: 'green-button', cue: 38 },
-			{ label: 'OPEN JA/NEI', voteControl: 'open votes:Ja,Nei', style: 'green-button', cue: 38 },
-			{ label: 'OPEN JA/NEI/KANSKJE', voteControl: 'open votes:Ja,Nei,Kanskje', style: 'green-button', cue: 38 },
-			{ label: 'CLOSE VOTES', voteControl: 'close votes', style: 'red-button', cue: 39 },
+			{ label: 'OPEN A/B', voteControl: 'open votes:A,B', style: 'green-button' },
+			{ label: 'OPEN JA/NEI', voteControl: 'open votes:Ja,Nei', style: 'green-button' },
+			{ label: 'OPEN JA/NEI/KANSKJE', voteControl: 'open votes:Ja,Nei,Kanskje', style: 'green-button' },
+			{ label: 'CLOSE VOTES', voteControl: 'close votes', style: 'red-button' },
 			{ label: 'RESET', voteControl: 'reset votes' },
 			{ label: 'COUNT', voteControl: 'count votes' },
 			{ label: 'PUSH', voteControl: 'push votes', style: 'blue-button' },
@@ -35,8 +101,8 @@
 		];
 
 		var quizControl = [
-			{ label: 'OPEN QUESTION', quizControl: 'open question', style: 'green-button', cue: 38 },
-			{ label: 'CLOSE QUESTION', quizControl: 'close question', style: 'red-button', cue: 39 },
+			{ label: 'OPEN QUESTION', quizControl: 'open question', style: 'green-button' },
+			{ label: 'CLOSE QUESTION', quizControl: 'close question', style: 'red-button' },
 			{ label: 'RESET', quizControl: 'reset answers' },
 			{ label: 'FETCH', quizControl: 'fetch answers' },
 			{ label: '>QUESTION', quizControl: 'push question', style: 'blue-button' },
@@ -80,6 +146,21 @@
 					{
 						label: 'CUES',
 						section: 'master',
+						style:'dark-button wide'
+					},
+					{
+						label: 'CHALLENGE',
+						section: 'challenge',
+						style:'dark-button wide'
+					},
+					{
+						label: 'DUEL',
+						section: 'duel',
+						style:'dark-button wide'
+					},
+					{
+						label: 'ROBBERY',
+						section: 'robbery',
 						style:'dark-button wide'
 					},
 					{
@@ -155,6 +236,24 @@
 				parent: 'main',
 				content: []
 					.concat(mainCues)
+			},
+			{
+				name: 'challenge',
+				parent: 'main',
+				content: []
+					.concat(challengeControl)
+			},
+			{
+				name: 'duel',
+				parent: 'main',
+				content: []
+					.concat(duelControl)
+			},
+			{
+				name: 'robbery',
+				parent: 'main',
+				content: []
+					.concat(robberyControl)
 			},
 			{
 				name: 'qlab',

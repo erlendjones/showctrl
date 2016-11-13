@@ -1,0 +1,196 @@
+<html>
+<head>
+	<link href="buttons.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+	<div id="header" class="clear-both"></div>
+	<div id="buttons" class="clear-both"></div>
+	<script src="/socket.io-3.2.6.js"></script>
+	<script src="/assets.min.js"></script>
+	<script>
+
+		// BUTTON-COLLECTION
+		var mainCues = [
+			{ label: 'KAM 1', cue: 1	},
+			{ label: 'KAM 2', cue: 2	},
+			{ label: 'CUE', cue: 3	},
+			{ label: 'CUE', cue: 4	},
+			{ label: 'CUE', cue: 5	},
+			{ label: 'CUE', cue: 6	},
+			{ label: 'CUE', cue: 7	},
+			{ label: 'CUE', cue: 8	},
+			{ label: 'CUE', cue: 9	},
+			{ label: 'CUE', cue: 10	},
+		];
+
+		var voteControl = [
+			{ label: 'OPEN A/B', voteControl: 'open votes:A,B', style: 'green-button', cue: 38 },
+			{ label: 'OPEN JA/NEI', voteControl: 'open votes:Ja,Nei', style: 'green-button', cue: 38 },
+			{ label: 'OPEN JA/NEI/KANSKJE', voteControl: 'open votes:Ja,Nei,Kanskje', style: 'green-button', cue: 38 },
+			{ label: 'CLOSE VOTES', voteControl: 'close votes', style: 'red-button', cue: 39 },
+			{ label: 'RESET', voteControl: 'reset votes' },
+			{ label: 'COUNT', voteControl: 'count votes' },
+			{ label: 'PUSH', voteControl: 'push votes', style: 'blue-button' },
+			{ type: 'container', id: 'votes', style:'clear-both' }
+		];
+
+		var quizControl = [
+			{ label: 'OPEN QUESTION', quizControl: 'open question', style: 'green-button', cue: 38 },
+			{ label: 'CLOSE QUESTION', quizControl: 'close question', style: 'red-button', cue: 39 },
+			{ label: 'RESET', quizControl: 'reset answers' },
+			{ label: 'FETCH', quizControl: 'fetch answers' },
+			{ label: '>QUESTION', quizControl: 'push question', style: 'blue-button' },
+			{ label: '>OPTIONS', quizControl: 'push options', style: 'blue-button' },
+			{ label: '>ANSWERS', quizControl: 'push answers', style: 'blue-button' },
+			{ label: '>STATUS', quizControl: 'push status', style: 'blue-button' },
+			{ type: 'container', id: 'answers', style:'clear-both' }
+		];
+
+		var scoreControl = [
+			{ label: 'A+', scoreControl: 'inc score:a', style: 'grey-button' },
+			{ label: 'A-', scoreControl: 'dec score:a', style: 'grey-button' },
+			{ label: 'B+', scoreControl: 'inc score:b', style: 'grey-button' },
+			{ label: 'B-', scoreControl: 'dec score:b', style: 'grey-button' },
+			{ label: 'C+', scoreControl: 'inc score:c', style: 'grey-button' },
+			{ label: 'C-', scoreControl: 'dec score:c', style: 'grey-button' },
+			{ label: 'D+', scoreControl: 'inc score:d', style: 'grey-button' },
+			{ label: 'D-', scoreControl: 'dec score:d', style: 'grey-button' },
+			{ label: 'CHANGE 1', scoreControl: 'set score change amount:1', toggleGroup: 'a' },
+			{ label: 'CHANGE 100', scoreControl: 'set score change amount:100', toggleGroup: 'a' },
+			{ label: 'CHANGE 300', scoreControl: 'set score change amount:300', toggleGroup: 'a' },
+			{ label: 'SETTLE SCORE', scoreControl: 'settle score', style: 'red-button'  },
+			{ label: 'OPEN TAP', scoreControl: 'open tap', style: 'red-button'  },
+			{ label: 'CLOSE TAP', scoreControl: 'close tap', style: 'red-button'  }
+		];
+
+		var statusBoard = [
+			{ type: 'container', id: 'teamstatus', style:'clear-both' }
+		];
+
+		var qlab = [
+			{ label: 'GO', qlab: '/go', style: 'green-button' },
+			{ label: 'STOP ALL', qlab: '/panic', style: 'red-button' },
+		];
+
+		// BUTTON-MAP
+		var items = [
+			{
+				name: 'main',
+				content: [
+					{
+						label: 'CUES',
+						section: 'master',
+						style:'dark-button wide'
+					},
+					{
+						label: 'GRAFIKK',
+						section: 'grafikk',
+						style:'dark-button wide'
+					},
+					{
+						label: 'QLAB',
+						section: 'qlab',
+						style:'dark-button wide'
+					},
+					{
+						label: 'VOTE',
+						section: 'vote control',
+						style:'dark-button wide'
+					},
+					{
+						label: 'QUIZ',
+						section: 'quiz control',
+						style:'dark-button wide'
+					},
+					{
+						label: 'STATUS',
+						section: 'statusBoard',
+						style:'dark-button wide'
+					},
+					{
+						label: 'SCORE',
+						section: 'score control',
+						style:'dark-button wide'
+					}
+				]
+			},
+			{
+				name: 'grafikk',
+				parent: 'main',
+				content: [
+					{
+						label: 'KEY PÅ',
+						cue: 20,
+						style: 'red-button'
+					},
+					{
+						label: 'KEY AV',
+						cue: 21,
+						style: 'red-button'
+					},
+					{
+						label: 'A+',
+						cue: 22,
+						style: 'blue-button'
+					},
+					{
+						label: 'A-',
+						cue: 23,
+						style: 'blue-button'
+					},
+					{
+						label: 'B+',
+						cue: 24,
+						style: 'blue-button'
+					},
+					{
+						label: 'B-',
+						cue: 25,
+						style: 'blue-button'
+					}
+				]
+			},
+			{
+				name: 'master',
+				parent: 'main',
+				content: []
+					.concat(mainCues)
+			},
+			{
+				name: 'qlab',
+				parent: 'main',
+				content: []
+					.concat(mainCues)
+					.concat(qlab)
+			},
+			{
+				name: 'vote control',
+				parent: 'main',
+				content: []
+					.concat(voteControl)
+			},
+			{
+				name: 'quiz control',
+				parent: 'main',
+				content: []
+					.concat(quizControl)
+			},
+			{
+				name: 'statusBoard',
+				parent: 'main',
+				content: []
+					.concat(statusBoard)
+			},
+			{
+				name: 'score control',
+				parent: 'main',
+				content: []
+					.concat(scoreControl)
+			},
+		];
+		matrixAccess = true;
+		window.touchdown = 'click';
+		//window.touchdown = 'touchstart';
+	</script>
+	<script src="/quizmaster-client.js"></script>
+</body>

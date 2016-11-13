@@ -20,10 +20,10 @@ const config = {
     database : 'gameshow'
   },
   carboniteConnection: {
-    host:     '192.168.1.136'
+    host:     '192.168.8.109'
   },
   xpressionConnection: {
-    host:     '192.168.1.123'
+    host:     '192.168.8.101'
   },
   maConnection: {
     host:     '192...'
@@ -102,6 +102,20 @@ var score = {
   changeAmount: 1
 }
 
+var duel = {
+  left: {
+    player: 'a',
+    score: 0
+    // derived total_score
+  },
+  right: {
+    player: 'b',
+    score: 0
+    // derived total_score
+  }
+}
+
+
 io.on('connection', function (socket) {
 	var address = socket.request.connection.remoteAddress;
 	console.log('User connected');
@@ -139,7 +153,7 @@ io.on('connection', function (socket) {
   socket.on('get question',function(msg,callback){
 		var answered = false;
 		for (answer in question.answers){
-			if (answer == msg.team){
+			if (typeof msg.team != 'undefined' && answer == msg.team){
 				callback(true);
 				answered = true;
 			}
@@ -152,7 +166,7 @@ io.on('connection', function (socket) {
   socket.on('have i answered',function(msg,callback){
     var answered = false;
     for (answer in question.answers){
-      if (answer == msg.team){
+      if (typeof msg.team != 'undefined' && answer == msg.team){
         callback(true);
         answered = true;
       }
@@ -165,7 +179,7 @@ io.on('connection', function (socket) {
 	socket.on('should i answer',function(msg,callback){
 		var answered = false;
 		for (answer in question.answers){
-			if (answer == msg.team){
+			if (typeof msg.team != 'undefined' && answer == msg.team){
 				callback(false);
 				answered = true;
 			}
@@ -216,6 +230,9 @@ io.on('connection', function (socket) {
 	});
 	socket.on('run qlab cmd', function (cmd) {
 		runQlabCmd(cmd);
+	});
+  socket.on('run xpression cmd', function (cmd) {
+		runXpressionCmd(cmd);
 	});
 	socket.on('vote',function(msg, callback){
 		votes.votes[address] = msg;
@@ -285,6 +302,7 @@ io.on('connection', function (socket) {
       io.sockets.emit('update answers', question.answers);
       callback(null);
     }
+
     if (msg.action == 'push question'){
       // COUNT VOTES
       // PUSH TO GRAPHICS
@@ -371,7 +389,7 @@ io.on('connection', function (socket) {
 //// REMOTE CONNECTIONS ////
 var runMa = false;
 var runCarbonite = true;
-var runXpression= false;
+var runXpression= true;
 var runQlab = true;
 
 
@@ -440,24 +458,24 @@ if (runCarbonite){
 if (runXpression){
 	try {
 		var xpressionClient = new telnet();
-		pression.on('ready', function(prompt) {
+		xpressionClient.on('ready', function(prompt) {
 			console.log('XPRESSION connected');
 		});
 
-		pression.on('timeout', function() {
+		xpressionClient.on('timeout', function() {
 		  console.log('XPRESSION-socket timeout!')
 		  carboniteClient.end();
 		});
 
-		pression.on('close', function() {
+		xpressionClient.on('close', function() {
 		  console.log('XPRESSIONconnection closed');
 		});
 
-		pression.on('error', function() {
+		xpressionClient.on('error', function() {
 			console.log('XPRESSION-connection error');
 		});
 
-		pression.connect({ host: config.xpressionConnection.host || '192.168.1.5', port: config.xpressionConnection.port || 7788, timeout: 'infinite' });
+		xpressionClient.connect({ host: config.xpressionConnection.host || '192.168.1.5', port: config.xpressionConnection.port || 7788, timeout: 0 });
 	} catch (err) {console.log(err);};
 }
 
@@ -503,6 +521,17 @@ var runCue = function(cueNumber){
   if (runXpression){
 		try {
 			xpressionClient.exec('SEQI '+cueNumber+':1', function(response) {
+				console.log(response);
+			});
+		} catch (err) {console.log(err); };
+	}
+}
+
+var runXpressionCmd = function(cmd){
+	console.log('Run xPressionCmd '+cmd);
+  if (runXpression){
+		try {
+			xpressionClient.exec(cmd, function(response) {
 				console.log(response);
 			});
 		} catch (err) {console.log(err); };
