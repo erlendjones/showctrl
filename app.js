@@ -5,7 +5,7 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var mysql = require('mysql');
-
+var ma2console = require('ma2-msc');
 
 process.title = 'show-ctrl-server';
 
@@ -26,10 +26,11 @@ const config = {
     host:     '192.168.8.101'
   },
   maConnection: {
-    host:     '192...'
+    host:     '192.168.8.200',
+    port:     6004
   },
   qlabConnection: {
-    host:     '192.168.1.113'
+    host:     '192.168.2.113'
   }
 }
 
@@ -38,7 +39,17 @@ const config = {
 
 // MYSQL CONNECTION
 var mysqlCon = mysql.createConnection(config.mysqlConnection);
-mysqlCon.connect();
+mysqlCon.connect(function(err) {
+  if (err){
+    if (err.code == 'ECONNREFUSED'){
+      console.log('Could not connect to MySQL, make sure its running!');
+    } else {
+      throw err;
+    }
+  }else{
+    console.log('MySQL running fine at thread: ' + mysqlCon.threadId);
+  }
+});
 
 function selectQuestions(callback){
   mysqlCon.query('SELECT * FROM questions', function(err, rows) {
@@ -234,6 +245,9 @@ io.on('connection', function (socket) {
   socket.on('run xpression cmd', function (cmd) {
 		runXpressionCmd(cmd);
 	});
+  socket.on('run ma cmd', function (cmd) {
+		runMaCmd(cmd);
+	});
 	socket.on('vote',function(msg, callback){
 		votes.votes[address] = msg;
 		callback();
@@ -387,7 +401,7 @@ io.on('connection', function (socket) {
 
 
 //// REMOTE CONNECTIONS ////
-var runMa = false;
+var runMa = true;
 var runCarbonite = true;
 var runXpression= true;
 var runQlab = true;
@@ -403,31 +417,11 @@ if (runQlab){
 
 // MA REMOTE
 if (runMa){
-	try {
-		var maClient = new telnet();
-		maClient.on('ready', function(prompt) {
-			console.log('MA connected');
-		});
-
-		maClient.on('timeout', function() {
-		  console.log('MA-socket timeout!')
-		  maClient.end();
-		});
-
-		maClient.on('close', function() {
-		  console.log('MA-connection closed');
-		});
-
-		maClient.on('error', function() {
-			console.log('MA-connection error');
-		});
-
-		maClient.connect({
-      host: config.maConnection.host || '192.168.1.3',
-      port: config.maConnection.port || 23,
-      shellPrompt: '/ # ',
-      timeout: 10000 });
-	} catch (err) {console.log(err);};
+	var maClient = new ma2console({
+    host: config.maConnection.host,
+    port: config.maConnection.port,
+    errors: console.log
+  });
 }
 // CARBONITE REMOTE
 if (runCarbonite){
@@ -504,9 +498,7 @@ var runCue = function(cueNumber){
 
 	if (runMa){
 		try {
-			maClient.exec('GO macro '+cueNumber, function(response) {
-			 	console.log(response);
-			});
+			maClient.goto(cueNumber);
 		} catch (err) {console.log(err); };
 	}
 
@@ -534,6 +526,15 @@ var runXpressionCmd = function(cmd){
 			xpressionClient.exec(cmd, function(response) {
 				console.log(response);
 			});
+		} catch (err) {console.log(err); };
+	}
+}
+
+var runMaCmd = function(cmd){
+	console.log('Run maCmd '+cmd);
+  if (runMa){
+		try {
+			maClient.goto(cmd);
 		} catch (err) {console.log(err); };
 	}
 }
