@@ -187,6 +187,27 @@ var toggables = {
   someOthertoggableid: false,
 }
 
+var teamNames = {
+  a: '',
+  b: '',
+  c: '',
+  d: ''
+}
+
+
+getXpressionField('name_a', function(teamName){
+  teamNames['a'] = teamName;
+})
+getXpressionField('name_b', function(teamName){
+  teamNames['b'] = teamName;
+})
+getXpressionField('name_c', function(teamName){
+  teamNames['c'] = teamName;
+})
+getXpressionField('name_d', function(teamName){
+  teamNames['d'] = teamName;
+})
+
 
 io.on('connection', function (socket) {
 	var address = socket.request.connection.remoteAddress;
@@ -346,7 +367,11 @@ io.on('connection', function (socket) {
 	socket.on('vote control',function(msg, callback){
 		if (msg.action.split(':')[0] == 'open votes'){
 			votes.open = true;
-			votes.options = msg.action.split(':')[1];
+      if (msg.action.split(':').length == 1){
+        votes.options = teamNames;
+      }else{
+        votes.options = msg.action.split(':')[1];
+      }
 			io.sockets.emit('open votes',msg.action.split(':')[1]);
 		}
 		if (msg.action == 'close votes'){
