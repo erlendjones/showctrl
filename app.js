@@ -26,13 +26,13 @@ const config = {
     database : 'gameshow'
   },
   carboniteConnection: {
-    host:     '192.168.8.109'
+    host:     '192.168.8.103'
   },
   xpressionConnection: {
-    host:     '192.168.8.101'
+    host:     '192.168.8.100'
   },
   maConnection: {
-    host:     '192.168.8.200',
+    host:     '192.168.8.120',
     port:     6004
   },
   qlabConnection: {
