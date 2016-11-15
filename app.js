@@ -6,6 +6,8 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var mysql = require('mysql');
 var ma2console = require('ma2-msc');
+var Xpression = require('rosstalk-xpression');
+var Carbonite = require('rosstalk');
 
 process.title = 'show-ctrl-server';
 
@@ -17,6 +19,7 @@ var runQlab = true;
 
 //// CONFIGURATIONS ////
 const config = {
+  debug: false,
   port: 8080,
   mysqlConnection: {
     host     : 'localhost',
@@ -573,6 +576,7 @@ if (runMa){
     errors: console.log
   });
 }
+
 // CARBONITE REMOTE
 if (runCarbonite){
 	try {
@@ -599,30 +603,29 @@ if (runCarbonite){
 }
 
 // CARBONITE REMOTE
-var xpressionClient = new telnet();
+
+
+
+
+var xpressionClient = null;
+
 if (runXpression){
 	try {
-		xpressionClient.on('ready', function(prompt) {
-			console.log('XPRESSION connected');
-		});
 
-		xpressionClient.on('timeout', function() {
-		  console.log('XPRESSION-socket timeout!')
-		  carboniteClient.end();
-		});
+		xpressionClient = new Xpression({
+      host: config.xpressionConnection.host
+    })
+    xpressionClient.connect();
 
-		xpressionClient.on('close', function() {
-		  console.log('XPRESSIONconnection closed');
-		});
-
-		xpressionClient.on('error', function() {
-			console.log('XPRESSION-connection error');
-		});
-
-		xpressionClient.connect({ host: config.xpressionConnection.host || '192.168.1.5', port: config.xpressionConnection.port || 7788, timeout: 0, ors:'\r\n' });
 	} catch (err) {console.log(err);};
 }
 
+var runXpressionCmd = function(cmd){
+  if (runXpression){
+    xpressionClient.connect();
+    xpressionClient.command(cmd);
+  }
+}
 
 // RUN CUE COMMANDS
 var runQlabCmd = function(cmd){
@@ -660,31 +663,22 @@ var runCue = function(cueNumber){
 		} catch (err) {console.log(err); };
 	}
 
-  if (runXpression){
+  if (runXpression && false){
 		try {
-			xpressionClient.exec('SEQI '+cueNumber+':1', function(response) {
+			xpressionClient.send('SEQI '+cueNumber+':1', function(response) {
 				console.log(response);
 			});
 		} catch (err) {console.log(err); };
 	}
 }
 
-var runXpressionCmd = function(cmd){
-  if (runXpression){
-    console.log('Run xPressionCmd '+cmd);
-		try {
-			xpressionClient.exec(cmd, function(response) {
-				console.log(response);
-			});
-		} catch (err) {console.log(err); };
-	}
-}
+
 
 var runMaCmd = function(cmd){
-	console.log('Run maCmd '+cmd);
-  if (runMa){
-		try {
-			maClient.goto(cmd);
-		} catch (err) {console.log(err); };
-	}
+console.log('Run maCmd '+cmd);
+if (runMa){
+	try {
+		maClient.goto(cmd);
+	} catch (err) {console.log(err); };
+}
 }
