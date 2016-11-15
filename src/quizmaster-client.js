@@ -629,7 +629,7 @@
 	}
 
 	if (typeof scoredisplay != 'undefined'){
-			$("#scoredisplay").html('<div id="overlay"></div><div id="scorecontainer"><div id="teamname">'+displayTitle+'</div><div id="scorevalue">'+0+'</div></div>');
+			$("#scoredisplay").html('<div id="overlay"></div><div id="scorecontainer"><div id="teamname"></div><div id="scorevalue">'+0+'</div></div>');
 			window.lastScoreValue = 0;
 			socket.on('update scores', function(score){
 				if (score.values[team] != window.lastScoreValue){
@@ -698,6 +698,13 @@
 				});
 				$("#overlay").removeClass('blue-tint');
 			}
+
+			socket.emit('get team name', { team: window.team }, function(){
+
+			});
+			socket.on('update team name', function(msg){
+				$("#teamname").text(msg.teamName);
+			})
 		}
 
 })();

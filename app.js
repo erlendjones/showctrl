@@ -219,6 +219,16 @@ io.on('connection', function (socket) {
     selectQuestions(callback);
 	});
 
+  socket.on('get team name',function(msg,callback){
+    console.log('get team name',msg);
+    if (typeof callback == 'function'){
+  		callback({
+        team: msg.team,
+        team_name: team[msg.team]
+      })
+    };
+	});
+
   socket.on('set xpression question',function(msg,callback){
     if (typeof msg == 'object'){
       if (msg.id != question.question.id){
