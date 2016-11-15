@@ -29,7 +29,7 @@ const config = {
     host:     '192.168.8.109'
   },
   xpressionConnection: {
-    host:     '192.168.8.101'
+    host:     '127.0.0.1', //'192.168.8.101',
   },
   maConnection: {
     host:     '192.168.8.200',
@@ -599,9 +599,9 @@ if (runCarbonite){
 }
 
 // CARBONITE REMOTE
+var xpressionClient = new telnet();
 if (runXpression){
 	try {
-		var xpressionClient = new telnet();
 		xpressionClient.on('ready', function(prompt) {
 			console.log('XPRESSION connected');
 		});
@@ -619,7 +619,7 @@ if (runXpression){
 			console.log('XPRESSION-connection error');
 		});
 
-		xpressionClient.connect({ host: config.xpressionConnection.host || '192.168.1.5', port: config.xpressionConnection.port || 7788, timeout: 0 });
+		xpressionClient.connect({ host: config.xpressionConnection.host || '192.168.1.5', port: config.xpressionConnection.port || 7788, timeout: 0, ors:'\r\n' });
 	} catch (err) {console.log(err);};
 }
 
@@ -670,8 +670,8 @@ var runCue = function(cueNumber){
 }
 
 var runXpressionCmd = function(cmd){
-	console.log('Run xPressionCmd '+cmd);
   if (runXpression){
+    console.log('Run xPressionCmd '+cmd);
 		try {
 			xpressionClient.exec(cmd, function(response) {
 				console.log(response);
