@@ -270,6 +270,7 @@
 		});
 	}
 
+
 	if (typeof contestant != 'undefined'){
 			socket.on('open question', function(question){
 				console.log('open question', question);
@@ -340,25 +341,22 @@
 
 		var renderStatus = function(){
 			$("#teamstatus").html([
-				buttonHtml({label:'A'}),
+				buttonHtml({label:'A', style:'break-line'}),
 				renderStatusButton(question, 1, answers['a'] || null),
 				renderStatusButton(question, 2, answers['a'] || null),
 				renderStatusButton(question, 3, answers['a'] || null),
 				renderStatusButton(question, 4, answers['a'] || null),
-				buttonHtml({label:''}),
-				buttonHtml({label:'B'}),
+				buttonHtml({label:'B', style:'break-line'}),
 				renderStatusButton(question, 1, answers['b'] || null),
 				renderStatusButton(question, 2, answers['b'] || null),
 				renderStatusButton(question, 3, answers['b'] || null),
 				renderStatusButton(question, 4, answers['b'] || null),
-				buttonHtml({label:''}),
-				buttonHtml({label:'C'}),
+				buttonHtml({label:'C', style:'break-line'}),
 				renderStatusButton(question, 1, answers['c'] || null),
 				renderStatusButton(question, 2, answers['c'] || null),
 				renderStatusButton(question, 3, answers['c'] || null),
 				renderStatusButton(question, 4, answers['c'] || null),
-				buttonHtml({label:''}),
-				buttonHtml({label:'D'}),
+				buttonHtml({label:'D', style:'break-line'}),
 				renderStatusButton(question, 1, answers['d'] || null),
 				renderStatusButton(question, 2, answers['d'] || null),
 				renderStatusButton(question, 3, answers['d'] || null),
@@ -626,6 +624,7 @@
 
 	}
 
+
 	var setTeamScore = function(score, team){
 		if (score.values[team] != window.lastScoreValue[team]){
 			if (score.values[team] > window.lastScoreValue[team]){
@@ -687,6 +686,7 @@
 		}
 		$("#team-"+team).find(".overlay").removeClass('blue-tint');
 	}
+
 
 	if (typeof scoredisplaysingle != 'undefined'){
 		window.lastScoreValue = {};
@@ -752,39 +752,33 @@
 
 			socket.on('update teams name', function(teamNames){
 				console.log('update teams name', teamNames);
-				$('#team-a').find('.teamname').text(teamNames['a']);
-				$('#team-b').find('.teamname').text(teamNames['b']);
-				$('#team-c').find('.teamname').text(teamNames['c']);
-				$('#team-d').find('.teamname').text(teamNames['d']);
+				$("#teamname").text(teamNames[team]);
 			});
 
 			socket.on('update scores', function(score){
-				setTeamScore(score, 'a');
-				setTeamScore(score, 'b');
-				setTeamScore(score, 'c');
-				setTeamScore(score, 'd');
+				setTeamScore(score, team);
+			});
 
-				});
-
-
+			window.tapInterval = null;
+			window.lastTapScore[team] = 0;
 			socket.on('open tap', function(msg){
 				openAllTaps();
 			});
 
 			socket.on('close tap', function(msg){
-				closeTap('a');
-				closeTap('b');
-				closeTap('c');
-				closeTap('d');
+				closeTap(window.team);
 			});
 
 			socket.on('close one tap', function(msg){
-				closeTap(msg.team);
+				if (msg.team == window.team){
+					closeTap(team);
+				}
 			});
 
 			socket.emit('get team name', { team: window.team }, function(){
 
 			});
+
 			socket.on('update team name', function(msg){
 				$("#team-"+msg.team).find(".teamname").text(msg.teamName);
 			});
