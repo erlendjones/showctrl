@@ -108,9 +108,9 @@ body {
 
 
 #scoredisplay {
-	background: url(/img/score_display_bg_grey.png);
+	background: url(/img/score_display_bg_darker.png);
   position: fixed;
-  top: 0;
+  top: -60;
   right: 0;
   left: 0;
   bottom: 0;
@@ -134,25 +134,35 @@ body {
 	position: fixed;
 	text-align: center;
 
-	position: absolute;
-	width: 300px;
-	height: 200px;
+	position: center;
+	width: 1200px;
+	height: 1920px;
 	z-index: 15;
-	top: 50%;
-	left: 50%;
-	margin: -100px 0 0 -150px;
+	top: 28%;
+	left: 0%;
+}
+
+@font-face {
+    font-family: 'sportrop'; /*a name to be used later*/
+    src: url('fonts/sportrop-webfont.woff'); /*URL to font*/
+		src: local('sportrop'), url('fonts/sportrop-webfont.woff'), format('woff');
 }
 
 #teamname {
-	font-size: 60px;
+	font-family: 'sportrop';
+	font-size: 200px;
 }
 
 #scorevalue {
-	font-size: 100px;
+	font-family: 'sportrop';
+	font-size: 400px;
+
+	position: fixed;
+	top: -5;
+	right: 0;
+	left: 0;
+	bottom: 0;
 }
-
-
-
 
 .green-tint {
   background-color: rgba(0,255,0,.5);
