@@ -107,7 +107,7 @@ body {
 }
 
 
-.teamcanvas {
+.teamcanvas.singlescreen {
 	background: url(/img/score_display_bg_darker.png);
   position: fixed;
   top: -60;
@@ -119,10 +119,6 @@ body {
 
 .teamcanvas.multiscreen {
 	position: absolute !important;
-	top: initial !important;
-	right: initial !important;
-	left: initial !important;
-	bottom: initial !important;
 }
 
 .overlay {

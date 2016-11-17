@@ -695,7 +695,7 @@
 		window.lastTapScore = {};
 		window.lastTapScore[team] = 0;
 
-		$("#scoredisplay").html('<div id="team-'+team+'" class="teamcanvas"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue">0</div></div></div>');
+		$("#scoredisplay").html('<div id="team-'+team+'" class="teamcanvas singlescreen"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue">0</div></div></div>');
 
 		socket.on('update teams name', function(teamNames){
 			console.log('update teams name', teamNames);
