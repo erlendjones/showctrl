@@ -107,7 +107,7 @@ body {
 }
 
 
-#scoredisplay {
+.scoredisplay {
 	background: url(/img/score_display_bg_darker.png);
   position: fixed;
   top: -60;
@@ -117,7 +117,7 @@ body {
   background-size: cover;
 }
 
-#overlay {
+.overlay {
   position: fixed;
   top: 0;
   right: 0;
@@ -129,7 +129,7 @@ body {
 	transition: all 0.5s ease;
 }
 
-#scorecontainer {
+.scorecontainer {
 	color: #fff;
 	position: fixed;
 	text-align: center;
@@ -148,12 +148,12 @@ body {
 		src: local('sportrop'), url('fonts/sportrop-webfont.woff'), format('woff');
 }
 
-#teamname {
+.teamname {
 	font-family: 'sportrop';
 	font-size: 200px;
 }
 
-#scorevalue {
+.scorevalue {
 	font-family: 'sportrop';
 	font-size: 400px;
 

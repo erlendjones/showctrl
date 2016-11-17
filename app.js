@@ -82,6 +82,18 @@ function getXpressionField(field, callback){
   })
 }
 
+var countVotes = function(){
+  var count = {};
+  for (vote in votes.votes){
+    if (count[votes.votes[vote]]){
+      count[votes.votes[vote]] ++;
+    }else{
+      count[votes.votes[vote]] = 1;
+    }
+  }
+  return count;
+}
+
 
 function updateDataInDatabase(){
   setXpressionField('score_a',  score.values['a'], function(err){
@@ -101,31 +113,54 @@ function updateDataInDatabase(){
   var left_team = toggables['duel-set-left'];
   var right_team = toggables['duel-set-right'];
   setXpressionField('duel_left_score', duel.left.score, function(err){  //LEFT
-    console.log(err);
+    err != null & console.log(err);
   });
   getXpressionField('name_'+left_team, function(value){
-    console.log('name left team', value);
     setXpressionField('duel_left_name',  value, function(err){
-      console.log(err);
+      err != null & console.log(err);
     });
-  })
+  });
   setXpressionField('duel_left_total_score', score.values[left_team], function(err){
-    console.log(err);
+    err != null & console.log(err);
   });
 
   setXpressionField('duel_right_score', duel.right.score, function(err){ // RIGHT
-    console.log(err);
+    err != null & console.log(err);
   });
   getXpressionField('name_'+right_team, function(value){
     console.log('name right team', value);
     setXpressionField('duel_right_name',  value, function(err){
-      console.log(err);
+      err != null & console.log(err);
     });
   });
   setXpressionField('duel_right_total_score', score.values[right_team], function(err){
-    console.log(err);
+    err != null & console.log(err);
   });
+
+  var countedVotes = countVotes();
+  if (typeof countedVotes[teamNames['a']] != 'undefined'){
+    setXpressionField('votes_a', countedVotes[teamNames['a']], function(err){
+      err != null & console.log(err);
+    });
+  }
+  if (typeof countedVotes[teamNames['b']] != 'undefined'){
+    setXpressionField('votes_b', countedVotes[teamNames['b']], function(err){
+      err != null & console.log(err);
+    });
+  }
+  if (typeof countedVotes[teamNames['c']] != 'undefined'){
+    setXpressionField('votes_c', countedVotes[teamNames['c']], function(err){
+      err != null & console.log(err);
+    });
+  }
+  if (typeof countedVotes[teamNames['d']] != 'undefined'){
+    setXpressionField('votes_d', countedVotes[teamNames['d']], function(err){
+      err != null & console.log(err);
+    });
+  }
 }
+
+
 
 // USER INTERFACE
 server.listen(config.port, function () {
@@ -216,6 +251,22 @@ io.on('connection', function (socket) {
 	var address = socket.request.connection.remoteAddress;
 	console.log('User connected');
 
+  socket.emit('update teams name', teamNames);
+
+socket.emit('update teams name', teamNames);
+  socket.on('get teams name', function(){
+    socket.emit('update teams name', teamNames);
+  })
+
+  socket.on('set team name', function(msg){
+    console.log('set team name', msg);
+    teamNames[msg.team] = msg.name;
+    setXpressionField(msg.team, msg.nam, function(){
+
+    })
+    io.sockets.emit('update teams name', teamNames);
+  });
+
   socket.on('select questions',function(msg,callback){
     console.log('socket.on select questions',msg);
 		// get questions
@@ -227,7 +278,7 @@ io.on('connection', function (socket) {
     if (typeof callback == 'function'){
   		callback({
         team: msg.team,
-        team_name: team[msg.team]
+        team_name: teamNames[msg.team]
       })
     };
 	});
@@ -364,9 +415,11 @@ io.on('connection', function (socket) {
 	});
 	socket.on('vote',function(msg, callback){
 		votes.votes[address] = msg;
-		callback();
-		io.sockets.emit('update votes',countVotes());
-		console.log(votes.votes);
+		io.sockets.emit('update votes', countVotes());
+		console.log('ALL VOTES', votes.votes);
+    console.log('DERIVED VOTES', countVotes())
+    updateDataInDatabase();
+    callback();
 	});
   socket.on('answer',function(msg, callback){
 		question.answers[msg.team] = msg.answerIndex;
@@ -378,14 +431,18 @@ io.on('connection', function (socket) {
 		console.log(question.answers);
 	});
 	socket.on('vote control',function(msg, callback){
+    console.log('vote control', msg);
 		if (msg.action.split(':')[0] == 'open votes'){
 			votes.open = true;
       if (msg.action.split(':').length == 1){
-        votes.options = teamNames;
+        var teamNameArray = [ teamNames['a'], teamNames['b'], teamNames['c'], teamNames['d'] ]
+        console.log('vote control: emit stored team names', teamNameArray );
+        votes.options = teamNameArray;
       }else{
+        console.log('vote control: emit options', msg.action.split(':')[1]);
         votes.options = msg.action.split(':')[1];
       }
-			io.sockets.emit('open votes',msg.action.split(':')[1]);
+			io.sockets.emit('open votes', votes.options);
 		}
 		if (msg.action == 'close votes'){
 			votes.open = false;
@@ -413,6 +470,7 @@ io.on('connection', function (socket) {
 			// COUNT VOTES
 			// PUSH TO GRAPHICS
 		}
+    updateDataInDatabase();
 	});
 
   socket.on('quiz control',function(msg, callback){
@@ -554,20 +612,9 @@ io.on('connection', function (socket) {
     score.values[thief] = score.values[thief] + amount;
     score.values[victim] = score.values[victim] - amount;
   }
-
-
-	function countVotes(){
-		var count = {};
-		for (vote in votes.votes){
-			if (count[votes.votes[vote]]){
-				count[votes.votes[vote]] ++;
-			}else{
-				count[votes.votes[vote]] = 1;
-			}
-		}
-		return count;
-	}
 });
+
+
 
 
 // QLAB REMOTE
