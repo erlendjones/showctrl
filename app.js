@@ -12,7 +12,7 @@ var Carbonite = require('rosstalk-carbonite');
 process.title = 'show-ctrl-server';
 
 //// REMOTE CONNECTIONS ////
-var runMa = true;
+var runMa = false;
 var runCarbonite = true;
 var runXpression= true;
 var runQlab = true;
@@ -32,7 +32,7 @@ const config = {
     host:     '192.168.8.103'
   },
   xpressionConnection: {
-    host:     '127.0.0.1' //'192.168.8.101'
+    host:     '192.168.8.100' //'192.168.8.101'
   },
   maConnection: {
     host:     '192.168.8.120',
@@ -454,6 +454,16 @@ io.on('connection', function (socket) {
     console.log('score control', msg);
     var actionObj = msg.action.split(':');
     var action = actionObj[0];
+    if (action == 'duel swap'){
+      var xOldScore = score.values[toggables['duel-set-left']];
+      var yOldScore = score.values[toggables['duel-set-right']];
+
+      score.values[toggables['duel-set-left']] = yOldScore;
+      score.values[toggables['duel-set-right']] = xOldScore;
+
+      io.sockets.emit('update scores', score);
+      callback(null);
+    }
     if (action == 'duel inc left'){
       duel.left.score = duel.left.score + 1;
       callback(null);
