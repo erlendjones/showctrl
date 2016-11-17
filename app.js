@@ -7,7 +7,7 @@ var io = require('socket.io')(server);
 var mysql = require('mysql');
 var ma2console = require('ma2-msc');
 var Xpression = require('rosstalk-xpression');
-var Carbonite = require('rosstalk');
+var Carbonite = require('rosstalk-carbonite');
 
 process.title = 'show-ctrl-server';
 
@@ -32,14 +32,14 @@ const config = {
     host:     '192.168.8.103'
   },
   xpressionConnection: {
-    host:     '127.0.0.1', //'192.168.8.101',
+    host:     '127.0.0.1' //'192.168.8.101'
   },
   maConnection: {
     host:     '192.168.8.120',
     port:     6004
   },
   qlabConnection: {
-    host:     '192.168.2.113'
+    host:     '192.168.8.254'
   }
 }
 
@@ -578,52 +578,40 @@ if (runMa){
 }
 
 // CARBONITE REMOTE
+var carboniteClient = null;
 if (runCarbonite){
-	try {
-		var carboniteClient = new telnet();
-		carboniteClient.on('ready', function(prompt) {
-			console.log('CARBONITE connected');
-		});
-
-		carboniteClient.on('timeout', function() {
-		  console.log('CARBONITE-socket timeout!')
-		  carboniteClient.end();
-		});
-
-		carboniteClient.on('close', function() {
-		  console.log('CARBONITE-connection closed');
-		});
-
-		carboniteClient.on('error', function() {
-			console.log('CARBONITE-connection error');
-		});
-
-		carboniteClient.connect({ host: config.carboniteConnection.host || '192.168.1.5', port: config.carboniteConnection.port || 7788, timeout: 0 });
-	} catch (err) {console.log(err);};
+  try {
+		carboniteClient = new Carbonite({
+      host: config.carboniteConnection.host
+    })
+    carboniteClient.connect();
+  } catch (err) {console.log(err); };
 }
 
-// CARBONITE REMOTE
-
-
-
-
+// XPRESSION REMOTE
 var xpressionClient = null;
-
 if (runXpression){
-	try {
-
+  try {
 		xpressionClient = new Xpression({
       host: config.xpressionConnection.host
     })
     xpressionClient.connect();
-
-	} catch (err) {console.log(err);};
+  } catch (err) {console.log(err); };
 }
+
+
+
+
+
+
 
 var runXpressionCmd = function(cmd){
   if (runXpression){
-    xpressionClient.connect();
-    xpressionClient.command(cmd);
+    try {
+      console.log('run xpression cmd:',cmd);
+      //xpressionClient.connect();
+      xpressionClient.command(cmd);
+    } catch (err) {console.log(err); };
   }
 }
 
@@ -656,29 +644,19 @@ var runCue = function(cueNumber){
 	}
 
 	if (runCarbonite){
-		try {
-			carboniteClient.exec('CC 8:'+cueNumber, function(response) {
-				console.log(response);
-			});
-		} catch (err) {console.log(err); };
+    console.log('carbonite cmd: cc 8:',cueNumber);
+    carboniteClient.cc(8, cueNumber);
 	}
 
-  if (runXpression && false){
-		try {
-			xpressionClient.send('SEQI '+cueNumber+':1', function(response) {
-				console.log(response);
-			});
-		} catch (err) {console.log(err); };
-	}
 }
 
 
 
 var runMaCmd = function(cmd){
-console.log('Run maCmd '+cmd);
-if (runMa){
-	try {
-		maClient.goto(cmd);
-	} catch (err) {console.log(err); };
-}
+  console.log('Run maCmd '+cmd);
+  if (runMa){
+  	try {
+  		maClient.goto(cmd);
+  	} catch (err) {console.log(err); };
+  }
 }
