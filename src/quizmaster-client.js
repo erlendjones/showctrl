@@ -270,7 +270,6 @@
 		});
 	}
 
-
 	if (typeof contestant != 'undefined'){
 			socket.on('open question', function(question){
 				console.log('open question', question);
@@ -627,7 +626,6 @@
 
 	}
 
-
 	var setTeamScore = function(score, team){
 		if (score.values[team] != window.lastScoreValue[team]){
 			if (score.values[team] > window.lastScoreValue[team]){
@@ -690,91 +688,106 @@
 		$("#team-"+team).find(".overlay").removeClass('blue-tint');
 	}
 
-	if (typeof scoredisplay != 'undefined'){
-			$("#scoredisplay").html('<div id="team-'+team+'"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue">0</div></div></div>');
-			window.lastScoreValue[team] = 0;
+	if (typeof scoredisplaysingle != 'undefined'){
+		window.lastScoreValue = {};
+		window.lastScoreValue[team] = 0;
+		window.tapInterval = null;
+		window.lastTapScore = {};
+		window.lastTapScore[team] = 0;
+
+		$("#scoredisplay").html('<div id="team-'+team+'" class="teamcanvas"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue">0</div></div></div>');
+
+		socket.on('update teams name', function(teamNames){
+			console.log('update teams name', teamNames);
+			$('#team-'+team).find('.teamname').text(teamNames[team]);
+		});
+
+		socket.on('update scores', function(score){
+			setTeamScore(score, team);
+		});
+
+		socket.on('open tap', function(msg){
+			openAllTaps();
+		});
+
+		socket.on('close tap', function(msg){
+			closeTap(window.team);
+		});
+
+		socket.on('close one tap', function(msg){
+			if (msg.team == window.team){
+				closeTap(team);
+			}
+		});
+
+		socket.emit('get team name', { team: window.team }, function(){
+
+		});
+
+		socket.on('update team name', function(msg){
+			$("#team-"+msg.team).find(".teamname").text(msg.teamName);
+		});
+	}
+
+	if (typeof scoredisplayquad != 'undefined'){
+		window.lastScoreValue = {
+			'a': 0,
+			'b': 0,
+			'c': 0,
+			'd': 0
+		};
+		window.lastTapScore = {
+			'a': 0,
+			'b': 0,
+			'c': 0,
+			'd': 0
+		};
+		window.tapInterval = null;
+
+
+		$("#scoredisplay").append('<div id="team-a" class="teamcanvas multiscreen"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue">0</div></div></div>')
+											.append('<div id="team-b" class="teamcanvas multiscreen"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue">0</div></div></div>')
+											.append('<div id="team-c" class="teamcanvas multiscreen"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue">0</div></div></div>')
+											.append('<div id="team-d" class="teamcanvas multiscreen"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue">0</div></div></div>');
+
 			socket.on('update teams name', function(teamNames){
 				console.log('update teams name', teamNames);
-				$("#teamname").text(teamNames[team]);
+				$('#team-a').find('.teamname').text(teamNames['a']);
+				$('#team-b').find('.teamname').text(teamNames['b']);
+				$('#team-c').find('.teamname').text(teamNames['c']);
+				$('#team-d').find('.teamname').text(teamNames['d']);
 			});
 
 			socket.on('update scores', function(score){
-				setTeamScore(score, team);
-			});
+				setTeamScore(score, 'a');
+				setTeamScore(score, 'b');
+				setTeamScore(score, 'c');
+				setTeamScore(score, 'd');
 
-			window.tapInterval = null;
-			window.lastTapScore[team] = 0;
+				});
+
+
 			socket.on('open tap', function(msg){
 				openAllTaps();
 			});
 
 			socket.on('close tap', function(msg){
-				closeTap(window.team);
+				closeTap('a');
+				closeTap('b');
+				closeTap('c');
+				closeTap('d');
 			});
 
 			socket.on('close one tap', function(msg){
-				if (msg.team == window.team){
-					closeTap(team);
-				}
+				closeTap(msg.team);
 			});
 
 			socket.emit('get team name', { team: window.team }, function(){
 
 			});
-
 			socket.on('update team name', function(msg){
 				$("#team-"+msg.team).find(".teamname").text(msg.teamName);
 			});
 		}
-
-		if (typeof scoredisplayquad != 'undefined'){
-			$("#scoredisplay").append()'<div id="team-a"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue">0</div></div></div>')
-															.append()'<div id="team-b"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue">0</div></div></div>')
-															.append()'<div id="team-c"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue">0</div></div></div>')
-															.append()'<div id="team-d"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue">0</div></div></div>');
-
-				window.lastScoreValue = 0;
-				socket.on('update teams name', function(teamNames){
-					console.log('update teams name', teamNames);
-					$('#team-a').find('.teamname').text(teamNames['a']);
-					$('#team-b').find('.teamname').text(teamNames['b']);
-					$('#team-c').find('.teamname').text(teamNames['c']);
-					$('#team-d').find('.teamname').text(teamNames['d']);
-				});
-
-				socket.on('update scores', function(score){
-					setTeamScore(score, 'a');
-					setTeamScore(score, 'b');
-					setTeamScore(score, 'c');
-					setTeamScore(score, 'd');
-
-					});
-
-
-
-				window.tapInterval = null;
-				window.lastTapScore[team] = 0;
-				socket.on('open tap', function(msg){
-					openAllTaps();
-				});
-
-				socket.on('close tap', function(msg){
-					closeTap('a');
-					closeTap('b');
-					closeTap('c');
-					closeTap('d');
-				});
-
-				socket.on('close one tap', function(msg){
-					closeTap(msg.team);
-				});
-
-				socket.emit('get team name', { team: window.team }, function(){
-
-				});
-				socket.on('update team name', function(msg){
-					$("#team-"+msg.team).find(".teamname").text(msg.teamName);
-				});
-			}
 
 })();
