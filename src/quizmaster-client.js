@@ -695,7 +695,7 @@
 		window.lastTapScore = {};
 		window.lastTapScore[team] = 0;
 
-		$("#scoredisplay").html('<div id="team-'+team+'" class="teamcanvas singlescreen"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue">0</div></div></div>');
+		$("#scoredisplay").html('<div id="team-'+team+'" class="teamcanvas-singlescreen"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue">0</div></div></div>');
 
 		socket.on('update teams name', function(teamNames){
 			console.log('update teams name', teamNames);
@@ -745,43 +745,45 @@
 		window.tapInterval = null;
 
 
-		$("#scoredisplay").append('<div id="team-a" class="teamcanvas multiscreen"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue">0</div></div></div>')
-											.append('<div id="team-b" class="teamcanvas multiscreen"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue">0</div></div></div>')
-											.append('<div id="team-c" class="teamcanvas multiscreen"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue">0</div></div></div>')
-											.append('<div id="team-d" class="teamcanvas multiscreen"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue">0</div></div></div>');
+		$("#scoredisplay").append('<div id="team-a" class="teamcanvas-multiscreen"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue">0</div></div></div>')
+											.append('<div id="team-b" class="teamcanvas-multiscreen"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue">0</div></div></div>')
+											.append('<div id="team-c" class="teamcanvas-multiscreen"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue">0</div></div></div>')
+											.append('<div id="team-d" class="teamcanvas-multiscreen"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue">0</div></div></div>');
 
-			socket.on('update teams name', function(teamNames){
-				console.log('update teams name', teamNames);
-				$("#teamname").text(teamNames[team]);
-			});
+		socket.on('update teams name', function(teamNames){
+			console.log('update teams name', teamNames);
+			$('#team-'+'a').find('.teamname').text(teamNames['a']);
+			$('#team-'+'b').find('.teamname').text(teamNames['b']);
+			$('#team-'+'c').find('.teamname').text(teamNames['c']);
+			$('#team-'+'d').find('.teamname').text(teamNames['d']);
+		});
 
-			socket.on('update scores', function(score){
-				setTeamScore(score, team);
-			});
+		socket.on('update scores', function(score){
+			setTeamScore(score, team);
+		});
 
-			window.tapInterval = null;
-			window.lastTapScore[team] = 0;
-			socket.on('open tap', function(msg){
-				openAllTaps();
-			});
+		socket.on('open tap', function(msg){
+			openAllTaps();
+		});
 
-			socket.on('close tap', function(msg){
-				closeTap(window.team);
-			});
+		socket.on('close tap', function(msg){
+			closeTap('a');
+			closeTap('b');
+			closeTap('c');
+			closeTap('d');
+		});
 
-			socket.on('close one tap', function(msg){
-				if (msg.team == window.team){
-					closeTap(team);
-				}
-			});
+		socket.on('close one tap', function(msg){
+			closeTap(msg.team);
+		});
 
-			socket.emit('get team name', { team: window.team }, function(){
+		socket.emit('get team name', { team: window.team }, function(){
 
-			});
+		});
 
-			socket.on('update team name', function(msg){
-				$("#team-"+msg.team).find(".teamname").text(msg.teamName);
-			});
-		}
+		socket.on('update team name', function(msg){
+			$("#team-"+msg.team).find(".teamname").text(msg.teamName);
+		});
+	}
 
 })();

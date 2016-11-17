@@ -3,6 +3,7 @@ body {
 	font-family: helvetica;
 	color:#111;
 }
+
 .quizm-big-button {
 	margin: 1px;
 	float: left;
@@ -107,7 +108,7 @@ body {
 }
 
 
-.teamcanvas.singlescreen {
+.teamcanvas-singlescreen {
 	background: url(/img/score_display_bg_darker.png);
   position: fixed;
   top: -60;
@@ -117,11 +118,9 @@ body {
   background-size: cover;
 }
 
-.teamcanvas.multiscreen {
-	position: absolute !important;
-}
 
-.overlay {
+
+.teamcanvas-singlescreen .overlay {
   position: fixed;
   top: 0;
   right: 0;
@@ -133,15 +132,8 @@ body {
 	transition: all 0.5s ease;
 }
 
-.multiscreen .overlay {
-	position: absolute !important;
-	top: initial !important;
-	right: initial !important;
-	left: initial !important;
-	bottom: initial !important;
-}
 
-.scorecontainer {
+.teamcanvas-singlescreen .scorecontainer {
 	color: #fff;
 	position: fixed;
 	text-align: center;
@@ -160,12 +152,12 @@ body {
 		src: local('sportrop'), url('fonts/sportrop-webfont.woff'), format('woff');
 }
 
-.teamname {
+.teamcanvas-singlescreen .teamname {
 	font-family: 'sportrop';
 	font-size: 200px;
 }
 
-.scorevalue {
+.teamcanvas-singlescreen .scorevalue {
 	font-family: 'sportrop';
 	font-size: 400px;
 
@@ -201,4 +193,25 @@ body {
   -moz-transition: all 0.5s ease;
   -o-transition: all 0.5s ease;
   transition: all 0.5s ease;
+}
+
+
+.teamcanvas-multiscreen {
+	width: 320px;
+	height: 400px;
+	float: left;
+	background: black;
+	color: white;
+}
+
+.teamcanvas-multiscreen .teamname {
+	font-size: 70px;
+	width: 320px;
+	text-align:center;
+}
+
+.teamcanvas-multiscreen .scorevalue {
+	font-size:120px;
+	width: 320px;
+	text-align:center;
 }
