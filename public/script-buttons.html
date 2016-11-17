@@ -26,21 +26,21 @@
 			{ label: 'INTRO',  cue: 3	},
 			{ label: 'HIGHLIGHT 1', xpression:'SEQI 4:4', scoreControl: 'duel take left', cue: 4 },
 			{ label: 'HIGHLIGHT 2', xpression:'SEQI 5:5', scoreControl: 'duel take right', cue: 5	},
-			{ label: 'LEFT +', scoreControl: 'duel inc left', style: 'green-button', cue:7 },
-			{ label: 'LEFT -', scoreControl: 'duel dec left', style: 'red-button' },
-			{ label: 'RIGHT +', scoreControl: 'duel inc right', style: 'green-button', cue:8 },
-			{ label: 'RIGHT -', scoreControl: 'duel dec right', style: 'red-button' },
+			//{ label: 'LEFT +', scoreControl: 'duel inc left', style: 'green-button', cue:7 },
+			//{ label: 'LEFT -', scoreControl: 'duel dec left', style: 'red-button' },
+			//{ label: 'RIGHT +', scoreControl: 'duel inc right', style: 'green-button', cue:8 },
+			//{ label: 'RIGHT -', scoreControl: 'duel dec right', style: 'red-button' },
 			{ label: 'BYTT POENG', xpression:'SEQI 4:1', scoreControl: 'duel swap', cue: 9	},
 			{ label: 'DEL 3', style: 'blue-button break-line'},
-			{ label: 'OPEN VOTES', xpression:'SEQI 10:10', voteControl: 'open votes', cue: 10 },
-			{ label: 'CLOSE VOTES', voteControl: 'close votes', cue: 11 },
+			//{ label: 'OPEN VOTES', xpression:'SEQI 10:10', voteControl: 'open votes', cue: 10 },
+			//{ label: 'CLOSE VOTES', voteControl: 'close votes', cue: 11 },
 			{ label: 'ROB!', scoreControl: 'robbery execute:100', style: 'red-button', cue:12 },
 			{ label: 'DEL 4', style: 'blue-button break-line'	},
-			{ label: 'ANIMER SCEPTRON', scoreControl: 'animate sceptron', cue:13 },
-			{ label: 'Q: GO+SUPER', xpression:'SEQI 14:14', quizControl: 'show', style: 'green-button', cue: 14 },
-			{ label: 'Q: START+ALT', xpression:'SEQI 15:15', quizControl: 'start and show options', style: 'green-button', cue: 15 },
-			{ label: 'Q: STOP + H.RIKTIG', /*  xpression i app.js - 11-14 inn */ quizControl: 'stop and show correct answer', style: 'green-button', cue: 16 },
-			{ label: 'Q: GI POENG', /*  xpression i app.js  - 11-14 ut og 7 og 6 ut*/ scoreControl: 'settle score', style: 'green-button', cue: 17 },
+			//{ label: 'ANIMER SCEPTRON', scoreControl: 'animate sceptron', cue:13 },
+			//{ label: 'Q: GO+SUPER', xpression:'SEQI 14:14', quizControl: 'show', style: 'green-button', cue: 14 },
+			//{ label: 'Q: START+ALT', xpression:'SEQI 15:15', quizControl: 'start and show options', style: 'green-button', cue: 15 },
+			//{ label: 'Q: STOP + H.RIKTIG', /*  xpression i app.js - 11-14 inn */ quizControl: 'stop and show correct answer', style: 'green-button', cue: 16 },
+			//{ label: 'Q: GI POENG', /*  xpression i app.js  - 11-14 ut og 7 og 6 ut*/ scoreControl: 'settle score', style: 'green-button', cue: 17 },
 			{ label: 'DIM A', /* scoreControl: 'displaydim tgl a',*/ cue:61 },
 			{ label: 'DIM B', /* scoreControl: 'displaydim tgl b',*/ cue:62 },
 			{ label: 'DIM C', /* scoreControl: 'displaydim tgl c',*/ cue:63 },
@@ -129,9 +129,9 @@
 			{ label: 'CLOSE TAP', scoreControl: 'close tap', style: 'red-button'  }
 		];
 
-		var statusBoard = [
+		/* var statusBoard = [
 			{ type: 'container', id: 'teamstatus', style:'clear-both' }
-		];
+		]; */
 
 		var qlab = [
 			{ label: 'GO', qlab: '/go', style: 'green-button' },
