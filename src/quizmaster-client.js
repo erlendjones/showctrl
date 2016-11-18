@@ -148,6 +148,15 @@
 					// DO TOGGLE STUFF HERE
 				}
 			}
+			if ($(this).data('configcontrol') != null){
+				console.log('running config control');
+				socket.emit('config control', {
+					action: $(this).data('configcontrol'),
+					value: prompt('Enter new value:')
+				}, function(res){
+					console.log(res);
+				});
+			}
 			if ($(this).data('toggableid') != null){
 				if ($(this).data('toggablegroup') != null){
 					socket.emit('toggable group change', {
@@ -186,6 +195,7 @@
 			(typeof data.voteControl != 'undefined' ? 'data-votecontrol="'+data.voteControl+'" ' : '') +
 			(typeof data.quizControl != 'undefined' ? 'data-quizcontrol="'+data.quizControl+'" ' : '') +
 			(typeof data.scoreControl != 'undefined' ? 'data-scorecontrol="'+data.scoreControl+'" ' : '') +
+			(typeof data.configControl != 'undefined' ? 'data-configcontrol="'+data.configControl+'" ' : '') +
 			(typeof data.answer != 'undefined' ? 'data-answer="'+data.answer+'" ' : '') +
 			(typeof data.team != 'undefined' ? 'data-team="'+data.team+'" ' : '') +
 			'>'+(typeof data.label != 'undefined' ? '<span>'+data.label+'</span>' : '')+'</div>';
@@ -202,6 +212,7 @@
 			(typeof data.voteControl != 'undefined' ? 'data-votecontrol="'+data.voteControl+'" ' : '') +
 			(typeof data.quizControl != 'undefined' ? 'data-quizcontrol="'+data.quizControl+'" ' : '') +
 			(typeof data.scoreControl != 'undefined' ? 'data-scorecontrol="'+data.scoreControl+'" ' : '') +
+			(typeof data.configControl != 'undefined' ? 'data-configcontrol="'+data.configControl+'" ' : '') +
 			(typeof data.answer != 'undefined' ? 'data-answer="'+data.answer+'" ' : '') +
 			(typeof data.team != 'undefined' ? 'data-team="'+data.team+'" ' : '') +
 			'>'+(typeof data.label != 'undefined' ? data.label : '')+'</div>';
@@ -254,16 +265,16 @@
 		});
 
 		socket.on('close votes',function(){
-			$("#header").html('Avstemmingen er avsluttet. Når du kan stemme igjen vil to knapper dukke opp!');
+			$("#header").html('Avstemmingen er avsluttet!');
 		});
 
 		socket.emit('have i voted',null,function(res){
 			if (res){
-				$("#header").html('Takk for stemmen! Når du kan stemme vil to knapper dukke opp!');
+				$("#header").html('Takk for stemmen!');
 			}else{
 				socket.emit('should i vote',null,function(res){
 					if (!res){
-						$("#header").html('Velkommen! Når du kan stemme vil to knapper dukke opp!');
+						$("#header").html('Velkommen! Når du kan stemme knapper dukke opp!');
 					}
 				});
 			}
@@ -285,7 +296,7 @@
 			});
 
 			socket.on('close question',function(){
-				$("#header").html('Oppgaven er avsluttet. Når du kan svare igjen vil to knappene dukke opp!');
+				$("#header").html('Oppgaven er avsluttet!');
 			});
 
 			socket.emit('have i answered', team,function(res){

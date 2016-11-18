@@ -252,20 +252,12 @@ io.on('connection', function (socket) {
 	console.log('User connected');
 
   socket.emit('update teams name', teamNames);
+  socket.emit('update scores', score);
 
-socket.emit('update teams name', teamNames);
   socket.on('get teams name', function(){
     socket.emit('update teams name', teamNames);
   })
 
-  socket.on('set team name', function(msg){
-    console.log('set team name', msg);
-    teamNames[msg.team] = msg.name;
-    setXpressionField(msg.team, msg.nam, function(){
-
-    })
-    io.sockets.emit('update teams name', teamNames);
-  });
 
   socket.on('select questions',function(msg,callback){
     console.log('socket.on select questions',msg);
@@ -597,6 +589,40 @@ socket.emit('update teams name', teamNames);
     }
     updateDataInDatabase();
   });
+
+  socket.on('config control',function(msg, callback){
+    console.log('config control', msg);
+    var actionObj = msg.action.split(':');
+    var action = actionObj[0];
+
+    if (action == 'set team name'){
+      var team = actionObj[1];
+      var name = msg.value;
+      if (name !== null){
+        console.log('set team name', team, name);
+        teamNames[team] = name;
+        setXpressionField('name_'+team, name, function(){
+
+        })
+        io.sockets.emit('update teams name', teamNames);
+      }
+    }
+    if (action == 'set team score'){
+      var team = actionObj[1];
+      if (msg.value !== null && msg.value !==''){
+        var newScore = parseInt(msg.value);
+        console.log('set team score', team, newScore);
+        setScoreValue(team, newScore);
+        setXpressionField('score_'+team, newScore, function(){
+
+        });
+        io.sockets.emit('update scores', score);
+      }
+
+    }
+    updateDataInDatabase();
+  });
+
 
   _settleScoreFromQuestion = function(team){
     if (question.answers[team] == question.question.correct_answer){

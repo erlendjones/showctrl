@@ -38,7 +38,7 @@
 			{ label: 'ROB!', scoreControl: 'robbery execute:100', style: 'red-button', cue:12 },
 			{ label: 'DEL 4', style: 'blue-button break-line'	},
 			//{ label: 'ANIMER SCEPTRON', scoreControl: 'animate sceptron', cue:13 },
-			//{ label: 'Q: GO+SUPER', xpression:'SEQI 14:14', quizControl: 'show', style: 'green-button', cue: 14 },
+			{ label: 'Q: GO+SUPER', xpression:'SEQI 14:14', quizControl: 'open question and tap', style: 'green-button', cue: 14 },
 			//{ label: 'Q: START+ALT', xpression:'SEQI 15:15', quizControl: 'start and show options', style: 'green-button', cue: 15 },
 			//{ label: 'Q: STOP + H.RIKTIG', /*  xpression i app.js - 11-14 inn */ quizControl: 'stop and show correct answer', style: 'green-button', cue: 16 },
 			//{ label: 'Q: GI POENG', /*  xpression i app.js  - 11-14 ut og 7 og 6 ut*/ scoreControl: 'settle score', style: 'green-button', cue: 17 },
@@ -130,6 +130,17 @@
 			{ label: 'CLOSE TAP', scoreControl: 'close tap', style: 'red-button'  }
 		];
 
+		var configControl = [
+			{ label: 'SET A NAME', configControl: 'set team name:a', style: 'grey-button' },
+			{ label: 'SET B NAME', configControl: 'set team name:b', style: 'grey-button' },
+			{ label: 'SET C NAME', configControl: 'set team name:c', style: 'grey-button' },
+			{ label: 'SET D NAME', configControl: 'set team name:d', style: 'grey-button' },
+			{ label: 'SET A SCORE', configControl: 'set team score:a', style: 'grey-button clear-both' },
+			{ label: 'SET B SCORE', configControl: 'set team score:b', style: 'grey-button' },
+			{ label: 'SET C SCORE', configControl: 'set team score:c', style: 'grey-button' },
+			{ label: 'SET D SCORE', configControl: 'set team score:d', style: 'grey-button' },
+		];
+
 		var statusBoard = [
 			{ type: 'container', id: 'teamstatus', style:'clear-both' }
 		];
@@ -192,6 +203,11 @@
 					{
 						label: 'SCORE',
 						section: 'score control',
+						style:'dark-button wide'
+					},
+					{
+						label: 'CONFIG',
+						section: 'config control',
 						style:'dark-button wide'
 					}
 				]
@@ -257,6 +273,12 @@
 				parent: 'main',
 				content: []
 					.concat(scoreControl)
+			},
+			{
+				name: 'config control',
+				parent: 'main',
+				content: []
+					.concat(configControl)
 			},
 		];
 		matrixAccess = true;
