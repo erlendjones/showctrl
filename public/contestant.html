@@ -14,11 +14,21 @@
 		// BUTTON-COLLECTION
 		window.touchdown = 'click';
 		//window.touchdown = 'touchstart';
-		
+
 		// BUTTON-MAP
 		var items = [];
 		contestant = true;
-		team = prompt('Select team: a,b,c or d?')
+		team = prompt('Select team: a,b,c or d?');
+
+		switch(team){
+			case 'a': break;
+			case 'b': break;
+			case 'c': break;
+			case 'd': break;
+			default: alert('Incorrect team entered, please try again. Remember to use small caps!'); contestant = undefined; break;
+		}
+
+
 	</script>
 	<script src="/quizmaster-client.js"></script>
 	<script type="text/javascript">
