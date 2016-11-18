@@ -96,6 +96,7 @@ var countVotes = function(){
 
 
 function updateDataInDatabase(){
+
   setXpressionField('score_a',  score.values['a'], function(err){
     console.log(err);
   });
@@ -232,19 +233,6 @@ var teamNames = {
   d: ''
 }
 
-
-getXpressionField('name_a', function(teamName){
-  teamNames['a'] = teamName;
-})
-getXpressionField('name_b', function(teamName){
-  teamNames['b'] = teamName;
-})
-getXpressionField('name_c', function(teamName){
-  teamNames['c'] = teamName;
-})
-getXpressionField('name_d', function(teamName){
-  teamNames['d'] = teamName;
-})
 
 
 io.on('connection', function (socket) {
@@ -753,3 +741,33 @@ var runMaCmd = function(cmd){
   	} catch (err) {console.log(err); };
   }
 }
+
+
+
+
+// FETCH INITIAL STATE FROM DB
+getXpressionField('name_a', function(teamName){
+  teamNames['a'] = teamName;
+})
+getXpressionField('name_b', function(teamName){
+  teamNames['b'] = teamName;
+})
+getXpressionField('name_c', function(teamName){
+  teamNames['c'] = teamName;
+})
+getXpressionField('name_d', function(teamName){
+  teamNames['d'] = teamName;
+})
+
+getXpressionField('score_a', function(score){
+  setScoreValue('a', parseInt(score));
+})
+getXpressionField('score_b', function(score){
+  setScoreValue('b', parseInt(score));
+})
+getXpressionField('score_c', function(score){
+  setScoreValue('c', parseInt(score));
+})
+getXpressionField('score_d', function(score){
+  setScoreValue('d', parseInt(score));
+})
