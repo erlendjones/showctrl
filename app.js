@@ -124,7 +124,6 @@ function updateDataInDatabase(){
   setXpressionField('duel_left_total_score', score.values[left_team], function(err){
     err != null & console.log(err);
   });
-
   setXpressionField('duel_right_score', duel.right.score, function(err){ // RIGHT
     err != null & console.log(err);
   });
@@ -361,6 +360,19 @@ io.on('connection', function (socket) {
 			}
 		}
 	});
+
+  socket.on('request toggables', function(msg){
+    Object.keys(toggables).forEach(function(prop, index){
+      io.sockets.emit('toggable change', {
+        id: prop,
+        active: toggables[prop]
+      });
+      io.sockets.emit('toggable group change', {
+        group: prop,
+        active: toggables[prop]
+      });
+    })
+  })
 
   socket.on('toggable change',function(msg){
     toggables[msg.id] = toggables[msg.id] == true ? false : true;
@@ -627,6 +639,11 @@ io.on('connection', function (socket) {
   }
 
   _swapScoreFromChallenge = function(thief,victim,amount){
+    var victimsRemainingAmount = score.values[victim] - 100;
+    if (victimsRemainingAmount < 0){
+      amount = amount + victimsRemainingAmount;
+    }
+
     setScoreValue(thief, score.values[thief] + amount);
     setScoreValue(victim, score.values[victim] - amount);
   }

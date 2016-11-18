@@ -170,6 +170,9 @@
 				}
 			}
 		});
+
+		socket.emit('request toggables', null);
+
 		openItemIndex = index;
 	}
 
