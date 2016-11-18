@@ -626,33 +626,46 @@
 
 
 	var setTeamScore = function(score, team){
+
+		// Limit new value to zero or above;
+		if (score.values[team] < 0){
+			score.values[team] = 0;
+		}
+
+		// Only run if value has changed
 		if (score.values[team] != window.lastScoreValue[team]){
+
+
+
+			// Tint to green if positive change
 			if (score.values[team] > window.lastScoreValue[team]){
 				$('#team-'+team).find('.overlay').addClass('green-tint');
 				setTimeout(function(){
-					$("#overlay").removeClass('green-tint');
+					$('#team-'+team).find('.overlay').removeClass('red-tint').removeClass('green-tint');
 				},2000);
 			}
 
+			// Tint to red if negative change
 			if (score.values[team] < window.lastScoreValue[team]){
 				$('#team-'+team).find('.overlay').addClass('red-tint');
 				setTimeout(function(){
-					$("#overlay").removeClass('red-tint');
+					$('#team-'+team).find('.overlay').removeClass('red-tint').removeClass('green-tint');
 				},2000);
 			}
 
-			$$('#team-'+team).find('.scorecontainer').effect( "shake", {
+			// Shake name when score is changed
+			$('#team-'+team).find('.scorecontainer').effect( "shake", {
 				direction: 'up',
 				distance: 15,
 				times: 6
 			});
 
-			var animationLength = (window.lastScoreValue - score.values[team]) * 5;
-			if (animationLength < 0){
-				animationLength  = animationLength *-1;
-			}
+			// Calculate animation speed
+			var animationLength = (window.lastScoreValue[team] - score.values[team]) * 5;
+			if (animationLength < 0){ animationLength = animationLength *-1; }
+			if (animationLength > 3000){ animationLength = 3000; }
 
-			$('#team-'+team).find('.scorevalue').prop('number', window.lastScoreValue).animateNumber(
+			$('#team-'+team).find('.scorevalue').prop('number', window.lastScoreValue[team]).animateNumber(
 				{
 					number: score.values[team],
 				},
@@ -662,23 +675,48 @@
 		window.lastScoreValue[team] = score.values[team];
 	}
 
+	var decScoreByOne = function(team, belowZeroCallback){
+		var oldVal = parseInt($("#team-"+team).find('.scorevalue').text());
+		var newVal = oldVal - 1;
+		var lowerThanZero = newVal < 0;
+		if (!lowerThanZero){
+			$("#team-"+team).find('.scorevalue').html( newVal	);
+		}else{
+			belowZeroCallback(team);
+		}
+	}
+
 	var openAllTaps = function(){
 		$(".overlay").addClass('blue-tint');
 
-		window.tapInterval = setInterval( function(){
-			$("#team-a").find('.scorevalue').html( 	parseInt($("#team-a").find('.scorevalue').text()) - 1);
-			$("#team-b").find('.scorevalue').html( 	parseInt($("#team-b").find('.scorevalue').text()) - 1);
-			$("#team-c").find('.scorevalue').html( 	parseInt($("#team-c").find('.scorevalue').text()) - 1);
-			$("#team-d").find('.scorevalue').html( 	parseInt($("#team-d").find('.scorevalue').text()) - 1);
+		// If propogated, stop previous interval
+		clearInterval(window.tapInterval['a']);
+		clearInterval(window.tapInterval['b']);
+		clearInterval(window.tapInterval['c']);
+		clearInterval(window.tapInterval['d']);
+
+		// Start tap
+		window.tapInterval['a'] = setInterval( function(){
+			decScoreByOne('a', /* or */ closeTap);
+		}, 100);
+		window.tapInterval['b'] = setInterval( function(){
+			decScoreByOne('b', /* or */ closeTap);
+		}, 100);
+		window.tapInterval['c'] = setInterval( function(){
+			decScoreByOne('c', /* or */ closeTap);
+		}, 100);
+		window.tapInterval['d'] = setInterval( function(){
+			decScoreByOne('d', /* or */ closeTap);
 		}, 100);
 	}
 
 	var closeTap = function(team){
-		clearInterval(window.tapInterval);
+		clearInterval(window.tapInterval[team]);
 		//window.tapInterval = null;
 		window.lastScoreValue[team] = parseInt($("#team-"+team).find('.scorevalue').text());
 		if (typeof isSlave != 'undefined'){
 			socket.emit('score control', {
+				onlyEmitToSlaves: true,
 				action:'set score',
 				team: team,
 				score: window.lastScoreValue[team]
@@ -691,9 +729,8 @@
 	if (typeof scoredisplaysingle != 'undefined'){
 		window.lastScoreValue = {};
 		window.lastScoreValue[team] = 0;
-		window.tapInterval = null;
-		window.lastTapScore = {};
-		window.lastTapScore[team] = 0;
+		window.tapInterval = {};
+		window.lastScoreValue[team] = null;
 
 		$("#scoredisplay").html('<div id="team-'+team+'" class="teamcanvas-singlescreen"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue">0</div></div></div>');
 
@@ -704,6 +741,12 @@
 
 		socket.on('update scores', function(score){
 			setTeamScore(score, team);
+		});
+
+		socket.on('update slave scores', function(score){
+			if (typeof isSlave != 'undefined'){
+				setTeamScore(score, team);
+			}
 		});
 
 		socket.on('open tap', function(msg){
@@ -736,19 +779,18 @@
 			'c': 0,
 			'd': 0
 		};
-		window.lastTapScore = {
-			'a': 0,
-			'b': 0,
-			'c': 0,
-			'd': 0
+		window.tapInterval = {
+			'a': null,
+			'b': null,
+			'c': null,
+			'd': null
 		};
-		window.tapInterval = null;
 
 
-		$("#scoredisplay").append('<div id="team-a" class="teamcanvas-multiscreen"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue">0</div></div></div>')
-											.append('<div id="team-b" class="teamcanvas-multiscreen"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue">0</div></div></div>')
-											.append('<div id="team-c" class="teamcanvas-multiscreen"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue">0</div></div></div>')
-											.append('<div id="team-d" class="teamcanvas-multiscreen"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue">0</div></div></div>');
+		$("#scoredisplay").append('<div id="team-a" class="teamcanvas-multiscreen"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue overlay">0</div></div></div>')
+											.append('<div id="team-b" class="teamcanvas-multiscreen"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue overlay">0</div></div></div>')
+											.append('<div id="team-c" class="teamcanvas-multiscreen"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue overlay">0</div></div></div>')
+											.append('<div id="team-d" class="teamcanvas-multiscreen"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue overlay">0</div></div></div>');
 
 		socket.on('update teams name', function(teamNames){
 			console.log('update teams name', teamNames);
@@ -759,7 +801,10 @@
 		});
 
 		socket.on('update scores', function(score){
-			setTeamScore(score, team);
+			setTeamScore(score, 'a');
+			setTeamScore(score, 'b');
+			setTeamScore(score, 'c');
+			setTeamScore(score, 'd');
 		});
 
 		socket.on('open tap', function(msg){

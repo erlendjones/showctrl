@@ -13,8 +13,8 @@ process.title = 'show-ctrl-server';
 
 //// REMOTE CONNECTIONS ////
 var runMa = false;
-var runCarbonite = true;
-var runXpression= true;
+var runCarbonite = false;
+var runXpression= false;
 var runQlab = true;
 
 //// CONFIGURATIONS ////
@@ -516,8 +516,8 @@ socket.emit('update teams name', teamNames);
       var xOldScore = score.values[toggables['duel-set-left']];
       var yOldScore = score.values[toggables['duel-set-right']];
 
-      score.values[toggables['duel-set-left']] = yOldScore;
-      score.values[toggables['duel-set-right']] = xOldScore;
+      setScoreValue(toggables['duel-set-left'], yOldScore);
+      setScoreValue(toggables['duel-set-right'], xOldScore);
 
       io.sockets.emit('update scores', score);
       callback(null);
@@ -539,12 +539,12 @@ socket.emit('update teams name', teamNames);
       callback(null);
     }
     if (action == 'inc score'){
-      score.values[actionObj[1]] = score.values[actionObj[1]] + score.changeAmount;
+      setScoreValue(actionObj[1], score.values[actionObj[1]] + score.changeAmount);
       io.sockets.emit('update scores', score);
       callback(null);
     }
     if (action == 'dec score'){
-      score.values[actionObj[1]] = score.values[actionObj[1]] - score.changeAmount;
+      setScoreValue(actionObj[1], score.values[actionObj[1]] - score.changeAmount);
       io.sockets.emit('update scores', score);
       callback(null);
     }
@@ -552,8 +552,12 @@ socket.emit('update teams name', teamNames);
       score.changeAmount = parseInt(actionObj[1]);
     }
     if (action == 'set score'){
-      score.values[msg.team] = msg.score;
-      io.sockets.emit('update scores', score);
+      setScoreValue(msg.team, msg.score);
+      if (msg.onlyEmitToSlaves == true){
+        io.sockets.emit('update slave scores', score);
+      }else{
+        io.sockets.emit('update scores', score);
+      }
     }
     if (action == 'settle score'){
       _settleScoreFromQuestion('a');
@@ -596,25 +600,31 @@ socket.emit('update teams name', teamNames);
 
   _settleScoreFromQuestion = function(team){
     if (question.answers[team] == question.question.correct_answer){
-      score.values[team] = score.values[team] + score.changeAmount;
+      setScoreValue(team, score.values[team] + score.changeAmount);
     }else{
-      score.values[team] = score.values[team] - score.changeAmount;
+      setScoreValue(team, score.values[team] - score.changeAmount);
     }
   }
 
   _settleScoreFromChallenge = function(team){
     if (toggables['challenge-inc-score-'+team] == true){
-      score.values[team] = score.values[team] + toggables['challenge-set-score-change-amount'];
+      setScoreValue(team, score.values[team] + toggables['challenge-set-score-change-amount']);
     }
   }
 
   _swapScoreFromChallenge = function(thief,victim,amount){
-    score.values[thief] = score.values[thief] + amount;
-    score.values[victim] = score.values[victim] - amount;
+    setScoreValue(thief, score.values[thief] + amount);
+    setScoreValue(victim, score.values[victim] - amount);
   }
 });
 
-
+var setScoreValue = function(team, value){
+  if (value < 0){
+    score.values[team] = 0;
+  }else{
+    score.values[team] = value;
+  }
+}
 
 
 // QLAB REMOTE
