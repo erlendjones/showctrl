@@ -703,10 +703,17 @@
 	}
 
 	var closeTap = function(team){
+		console.log('closing this tap');
 		clearInterval(window.tapInterval[team]);
 		//window.tapInterval = null;
 		window.lastScoreValue[team] = parseInt($("#team-"+team).find('.scorevalue').text());
-		if (typeof isSlave != 'undefined'){
+		if (typeof isSlave == 'undefined'){
+			console.log('emitting my undrained score', {
+				onlyEmitToSlaves: true,
+				action:'set score',
+				team: team,
+				score: window.lastScoreValue[team]
+			})
 			socket.emit('score control', {
 				onlyEmitToSlaves: true,
 				action:'set score',
@@ -732,11 +739,13 @@
 		});
 
 		socket.on('update scores', function(score){
+			console.log('update scores', score);
 			setTeamScore(score, team);
 		});
 
 		socket.on('update slave scores', function(score){
 			if (typeof isSlave != 'undefined'){
+				console.log('update slave scores', score);
 				setTeamScore(score, team);
 			}
 		});

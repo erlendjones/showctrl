@@ -578,6 +578,7 @@ io.on('connection', function (socket) {
       score.changeAmount = parseInt(actionObj[1]);
     }
     if (action == 'set score'){
+      console.log('got score from display',msg.team,':',msg.score);
       setScoreValue(msg.team, msg.score);
       if (msg.onlyEmitToSlaves == true){
         io.sockets.emit('update slave scores', score);
@@ -590,6 +591,7 @@ io.on('connection', function (socket) {
       _settleScoreFromQuestion('b');
       _settleScoreFromQuestion('c');
       _settleScoreFromQuestion('d');
+      console.log('question settle scores to',score)
       io.sockets.emit('update scores', score);
     }
     if (action == 'robbery execute'){
@@ -684,6 +686,7 @@ io.on('connection', function (socket) {
 });
 
 var setScoreValue = function(team, value){
+  console.log('set score value ',team,':',value)
   if (value < 0){
     score.values[team] = 0;
   }else{
