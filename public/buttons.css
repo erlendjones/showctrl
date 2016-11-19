@@ -12,6 +12,7 @@ body {
 	font-size: 16px;
 	height: 120px;
 	opacity:0.9;
+	font-variant: small-caps;
 }
 .big-button:hover {
 	opacity: 1;
@@ -62,4 +63,6 @@ body {
 }
 .toggle-active {
 	background: #eee;
+	color: #666;
+	outline: 1px solid;
 }

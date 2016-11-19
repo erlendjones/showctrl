@@ -4,12 +4,21 @@
 		return (Math.random().toString(36)+'00000000000000000').slice(2, N+2);
 	}
 
+	var is_touch_device = function() {
+	  return 'ontouchstart' in window        // works on most browsers
+	      || navigator.maxTouchPoints;       // works on IE10/11 and Surface
+	};
+
+	// Set the click trigger according to screen-type
+	window.touchdown = is_touch_device() ? 'touchstart' : 'click';
+
 
 	document.title="SHOW+CTRL";
 	var socket = io.connect();
 
-	//Make global for debugging
+	//Make the socket global for debugging
 	window.socket = socket;
+
 
 	socket.on('toggable change', function(msg){
 		console.log('toggable change recieved', msg);
@@ -51,42 +60,6 @@
 
 
 
-
-
-		/*
-		$("#"+containerId).children().unbind('click').bind('click', function(button){
-			if ($(this).data('cue') != null){
-				socket.emit('run cue', $(this).data('cue'), function(res){
-					console.log(res);
-				});
-			}
-			if ($(this).data('qlab') != null){
-				socket.emit('run qlab cmd', $(this).data('qlab'), function(res){
-					console.log(res);
-				});
-			}
-			if ($(this).data('section') != null){
-				if (item.target){
-					openItemByName($(this).data('section'), item.target);
-				}else{
-					openItemByName($(this).data('section'), 'buttons');
-				}
-			}
-			if ($(this).data('vote') != null){
-				socket.emit('vote', $(this).data('vote'), function(res){
-					console.log(res);
-					alert('Takk for stemmen!');
-				});
-				$("#header").html('Takk for stemmen. Knappene vil dukke opp igjen neste gang det skal stemmes.');
-
-			}
-			if ($(this).data('votecontrol') != null){
-				socket.emit('vote control', {action: $(this).data('votecontrol') }, function(res){
-					console.log(res);
-				});
-			}
-		});
-		*/
 
 		$("#"+containerId).children().unbind(window.touchdown || 'touchstart').bind(window.touchdown || 'touchstart', function(button){
 			if ($(this).data('cue') != null){
