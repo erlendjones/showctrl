@@ -294,11 +294,11 @@
 		socket.on('update votes', function(votes){
 			console.log(votes);
 			var htmla = [];
-			for (vote in votes){
+			Object.keys(votes).forEach(function(value, index){
 				htmla.push(buttonHtml({
-					label: vote+': '+votes[vote]
+					label: value+': '+votes[value]
 				}));
-			}
+			});
 			$("#votes").html(htmla.join(''));
 		});
 

@@ -13,8 +13,8 @@ process.title = 'show-ctrl-server';
 
 //// REMOTE CONNECTIONS ////
 var runMa = false;
-var runCarbonite = false;
-var runXpression= false;
+var runCarbonite = true;
+var runXpression= true;
 var runQlab = true;
 
 //// CONFIGURATIONS ////
@@ -39,7 +39,7 @@ const config = {
     port:     6004
   },
   qlabConnection: {
-    host:     '192.168.8.254'
+    host:     '192.168.8.138'
   }
 }
 
@@ -98,66 +98,65 @@ var countVotes = function(){
 function updateDataInDatabase(){
 
   setXpressionField('score_a',  score.values['a'], function(err){
-    console.log(err);
+    err != null && console.log(err);
   });
   setXpressionField('score_b',  score.values['b'], function(err){
-    console.log(err);
+    err != null && console.log(err);
   });
   setXpressionField('score_c',  score.values['c'], function(err){
-    console.log(err);
+    err != null && console.log(err);
   });
   setXpressionField('score_d',  score.values['d'], function(err){
-    console.log(err);
+    err != null && console.log(err);
   });
 
   /// DUEL DATA
   var left_team = toggables['duel-set-left'];
   var right_team = toggables['duel-set-right'];
   setXpressionField('duel_left_score', duel.left.score, function(err){  //LEFT
-    err != null & console.log(err);
+    err != null && console.log(err);
   });
   getXpressionField('name_'+left_team, function(value){
     setXpressionField('duel_left_name',  value, function(err){
-      err != null & console.log(err);
+      err != null && console.log(err);
     });
   });
   setXpressionField('duel_left_total_score', score.values[left_team], function(err){
-    err != null & console.log(err);
+    err != null && console.log(err);
   });
   setXpressionField('duel_right_score', duel.right.score, function(err){ // RIGHT
-    err != null & console.log(err);
+    err != null && console.log(err);
   });
   getXpressionField('name_'+right_team, function(value){
-    console.log('name right team', value);
     setXpressionField('duel_right_name',  value, function(err){
-      err != null & console.log(err);
+      err != null && console.log(err);
     });
   });
   setXpressionField('duel_right_total_score', score.values[right_team], function(err){
-    err != null & console.log(err);
+    err != null && console.log(err);
   });
 
   var countedVotes = countVotes();
-  if (typeof countedVotes[teamNames['a']] != 'undefined'){
-    setXpressionField('votes_a', countedVotes[teamNames['a']], function(err){
-      err != null & console.log(err);
-    });
-  }
-  if (typeof countedVotes[teamNames['b']] != 'undefined'){
-    setXpressionField('votes_b', countedVotes[teamNames['b']], function(err){
-      err != null & console.log(err);
-    });
-  }
-  if (typeof countedVotes[teamNames['c']] != 'undefined'){
-    setXpressionField('votes_c', countedVotes[teamNames['c']], function(err){
-      err != null & console.log(err);
-    });
-  }
-  if (typeof countedVotes[teamNames['d']] != 'undefined'){
-    setXpressionField('votes_d', countedVotes[teamNames['d']], function(err){
-      err != null & console.log(err);
-    });
-  }
+
+  setXpressionField('votes_a', countedVotes[teamNames['a']] || 0, function(err){
+    err != null && console.log(err);
+  });
+
+
+  setXpressionField('votes_b', countedVotes[teamNames['b']] || 0, function(err){
+    err != null && console.log(err);
+  });
+
+
+  setXpressionField('votes_c', countedVotes[teamNames['c']] || 0, function(err){
+    err != null && console.log(err);
+  });
+
+
+  setXpressionField('votes_d', countedVotes[teamNames['d']] || 0, function(err){
+    err != null && console.log(err);
+  });
+
 }
 
 
@@ -223,6 +222,17 @@ var duel = {
 var toggables = {
   sometoggableid: true,
   someOthertoggableid: false,
+  duel_left_total_score: 'a',
+  'duel-set-left': 'a',
+  'duel-set-right': 'a',
+  'robbery-set-thief': 'a',
+  'robbery-set-victim': 'a',
+  'challenge-inc-score-a': false,
+  'challenge-inc-score-b': false,
+  'challenge-inc-score-c': false,
+  'challenge-inc-score-d': false,
+  'challenge-set-score-change-amount': '100',
+  'score-active-change-amount-id': 'a'
 }
 
 var teamNames = {
@@ -236,7 +246,7 @@ var teamNames = {
 
 io.on('connection', function (socket) {
 	var address = socket.request.connection.remoteAddress;
-	console.log('User connected');
+	console.log('User connected (', address,')');
 
   socket.emit('update teams name', teamNames);
   socket.emit('update scores', score);
@@ -406,6 +416,7 @@ io.on('connection', function (socket) {
 		runMaCmd(cmd);
 	});
 	socket.on('vote',function(msg, callback){
+    console.log('vote recieved from (',address,') ',msg)
 		votes.votes[address] = msg;
 		io.sockets.emit('update votes', countVotes());
 		console.log('ALL VOTES', votes.votes);
@@ -419,7 +430,14 @@ io.on('connection', function (socket) {
 		io.sockets.emit('update answers', question.answers);
     io.sockets.emit('close one tap', {
       team: msg.team
-    })
+    });
+    switch(msg.team){
+      case 'a': runCue(60); break;
+      case 'b': runCue(61); break;
+      case 'c': runCue(62); break;
+      case 'd': runCue(63); break;
+      default: console.log('unknown team answered', msg);
+    }
 		console.log(question.answers);
 	});
 	socket.on('vote control',function(msg, callback){
@@ -745,6 +763,7 @@ var runCue = function(cueNumber){
 	console.log('Run cue '+cueNumber);
 	if (runQlab){
 		try {
+      console.log('run qlab cmd ','/cue/'+cueNumber+'/start');
 			qlabClient.send('/cue/'+cueNumber+'/start', 200, function (msg) {
 
 			});

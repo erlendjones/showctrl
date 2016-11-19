@@ -70,6 +70,7 @@
 			{ label: 'D+', cue: 9, scoreControl: 'challenge toggle inc score:d', toggableid: 'challenge-inc-score-d' },
 			{ label: 'CHANGE 1', toggableid: '1', toggablegroup: 'challenge-set-score-change-amount', style: 'break-line' },
 			{ label: 'CHANGE 100', toggableid: '100', toggablegroup: 'challenge-set-score-change-amount' },
+			{ label: 'CHANGE 200', toggableid: '200', toggablegroup: 'challenge-set-score-change-amount' },
 			{ label: 'CHANGE 300', toggableid: '300', toggablegroup: 'challenge-set-score-change-amount' },
 			{ label: 'PUSH', scoreControl: 'challenge settle score', style: 'blue-button' },
 		];
@@ -104,13 +105,10 @@
 		];
 
 		var voteControl = [
-			{ label: 'OPEN A/B', voteControl: 'open votes:A,B', style: 'green-button' },
-			{ label: 'OPEN JA/NEI', voteControl: 'open votes:Ja,Nei', style: 'green-button' },
-			{ label: 'OPEN JA/NEI/KANSKJE', voteControl: 'open votes:Ja,Nei,Kanskje', style: 'green-button' },
+			{ label: 'open TEAM-NAMES', voteControl: 'open votes', style: 'green-button' },
+			{ label: 'open JA/NEI', voteControl: 'open votes:Ja,Nei', style: 'green-button' },
 			{ label: 'CLOSE VOTES', voteControl: 'close votes', style: 'red-button' },
 			{ label: 'RESET', voteControl: 'reset votes' },
-			{ label: 'COUNT', voteControl: 'count votes' },
-			{ label: 'PUSH', voteControl: 'push votes', style: 'blue-button' },
 			{ type: 'container', id: 'votes', style:'clear-both' }
 		];
 
@@ -118,11 +116,6 @@
 			{ label: 'OPEN QUESTION', quizControl: 'open question', style: 'green-button' },
 			{ label: 'CLOSE QUESTION', quizControl: 'close question', style: 'red-button' },
 			{ label: 'RESET', quizControl: 'reset answers' },
-			{ label: 'FETCH', quizControl: 'fetch answers' },
-			{ label: '>QUESTION', quizControl: 'push question', style: 'blue-button' },
-			{ label: '>OPTIONS', quizControl: 'push options', style: 'blue-button' },
-			{ label: '>ANSWERS', quizControl: 'push answers', style: 'blue-button' },
-			{ label: '>STATUS', quizControl: 'push status', style: 'blue-button' },
 			{ type: 'container', id: 'answers', style:'clear-both' }
 		];
 
