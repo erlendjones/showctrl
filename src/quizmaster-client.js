@@ -399,6 +399,11 @@
 		window.questionStore = questionStore;
 		window.activeQuestion = activeQuestion;
 
+		socket.on('request next question', function(msg){
+			console.log('request next question');
+			takeNextQuestionAction();
+		})
+
 		var mountQuestions = function(){
 			mountQuestionsFromLocalStorage();
 		}
@@ -555,7 +560,7 @@
 				'set xpression question',
 				question,
 				function(){
-					socket.emit('quiz control', {action:'reset and open question'}, function(){
+					socket.emit('quiz control', {action:'reset answers'}, function(){
 						activeQuestion = id;
 						renderTable();
 						console.log('takeQuestionAction:callback');
@@ -637,11 +642,11 @@
 			if (score.values[team] < window.lastScoreValue[team]){
 				$('#team-'+team).find('.overlay').addClass('red-tint');
 				setTimeout(function(){
-					$("#overlay").removeClass('red-tint');
+					$('#team-'+team).find('.overlay').removeClass('red-tint');
 				},2000);
 			}
 
-			$$('#team-'+team).find('.scorecontainer').effect( "shake", {
+			$('#team-'+team).find('.scorecontainer').effect( "shake", {
 				direction: 'up',
 				distance: 15,
 				times: 6

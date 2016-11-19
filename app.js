@@ -475,19 +475,35 @@ socket.emit('update teams name', teamNames);
 
   socket.on('quiz control',function(msg, callback){
     console.log('quiz control', msg);
-    if (msg.action == 'reset question' || msg.action == 'reset and open question'){
+    if (msg.action == 'reset answers' || msg.action == 'reset answers and go'){
       question.answers = {};
       io.sockets.emit('update answers', question.answers);
       callback(null);
     }
-    if (msg.action == 'open question' || msg.action == 'reset and open question'){
+    if (msg.action == 'open question' || msg.action == 'open question and tap'){
       question.open = true;
       io.sockets.emit('open question', question.question);
     }
-    if (msg.action == 'close question'){
+    if (msg.action == 'open question and tap'){
+      score.tapOpen = ['a','b','c','d'];
+      io.sockets.emit('open tap', null);
+    }
+
+    if (msg.action == 'close question' || msg.action == 'close question and tap'){
       question.open = false;
       io.sockets.emit('close question');
     }
+
+    if (msg.action == 'close question and tap'){
+      score.tapOpen = null;
+      io.sockets.emit('close tap', null);
+    }
+
+    if (msg.action == 'reset answers and go'){
+      console.log('reset answers and go');
+      io.sockets.emit('request next question', null, null);
+    }
+
     if (msg.action == 'count question'){
       io.sockets.emit('update answers', question.answers);
       callback(null);
