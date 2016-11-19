@@ -13,8 +13,8 @@ process.title = 'show-ctrl-server';
 
 //// REMOTE CONNECTIONS ////
 var runMa = false;
-var runCarbonite = true;
-var runXpression= true;
+var runCarbonite = false;
+var runXpression= false;
 var runQlab = true;
 
 //// CONFIGURATIONS ////
@@ -96,6 +96,7 @@ var countVotes = function(){
 
 
 function updateDataInDatabase(){
+
   setXpressionField('score_a',  score.values['a'], function(err){
     console.log(err);
   });
@@ -123,7 +124,6 @@ function updateDataInDatabase(){
   setXpressionField('duel_left_total_score', score.values[left_team], function(err){
     err != null & console.log(err);
   });
-
   setXpressionField('duel_right_score', duel.right.score, function(err){ // RIGHT
     err != null & console.log(err);
   });
@@ -233,39 +233,18 @@ var teamNames = {
 }
 
 
-getXpressionField('name_a', function(teamName){
-  teamNames['a'] = teamName;
-})
-getXpressionField('name_b', function(teamName){
-  teamNames['b'] = teamName;
-})
-getXpressionField('name_c', function(teamName){
-  teamNames['c'] = teamName;
-})
-getXpressionField('name_d', function(teamName){
-  teamNames['d'] = teamName;
-})
-
 
 io.on('connection', function (socket) {
 	var address = socket.request.connection.remoteAddress;
 	console.log('User connected');
 
   socket.emit('update teams name', teamNames);
+  socket.emit('update scores', score);
 
-socket.emit('update teams name', teamNames);
   socket.on('get teams name', function(){
     socket.emit('update teams name', teamNames);
   })
 
-  socket.on('set team name', function(msg){
-    console.log('set team name', msg);
-    teamNames[msg.team] = msg.name;
-    setXpressionField(msg.team, msg.nam, function(){
-
-    })
-    io.sockets.emit('update teams name', teamNames);
-  });
 
   socket.on('select questions',function(msg,callback){
     console.log('socket.on select questions',msg);
@@ -381,6 +360,19 @@ socket.emit('update teams name', teamNames);
 			}
 		}
 	});
+
+  socket.on('request toggables', function(msg){
+    Object.keys(toggables).forEach(function(prop, index){
+      io.sockets.emit('toggable change', {
+        id: prop,
+        active: toggables[prop]
+      });
+      io.sockets.emit('toggable group change', {
+        group: prop,
+        active: toggables[prop]
+      });
+    })
+  })
 
   socket.on('toggable change',function(msg){
     toggables[msg.id] = toggables[msg.id] == true ? false : true;
@@ -532,8 +524,8 @@ socket.emit('update teams name', teamNames);
       var xOldScore = score.values[toggables['duel-set-left']];
       var yOldScore = score.values[toggables['duel-set-right']];
 
-      score.values[toggables['duel-set-left']] = yOldScore;
-      score.values[toggables['duel-set-right']] = xOldScore;
+      setScoreValue(toggables['duel-set-left'], yOldScore);
+      setScoreValue(toggables['duel-set-right'], xOldScore);
 
       io.sockets.emit('update scores', score);
       callback(null);
@@ -555,12 +547,12 @@ socket.emit('update teams name', teamNames);
       callback(null);
     }
     if (action == 'inc score'){
-      score.values[actionObj[1]] = score.values[actionObj[1]] + score.changeAmount;
+      setScoreValue(actionObj[1], score.values[actionObj[1]] + score.changeAmount);
       io.sockets.emit('update scores', score);
       callback(null);
     }
     if (action == 'dec score'){
-      score.values[actionObj[1]] = score.values[actionObj[1]] - score.changeAmount;
+      setScoreValue(actionObj[1], score.values[actionObj[1]] - score.changeAmount);
       io.sockets.emit('update scores', score);
       callback(null);
     }
@@ -568,8 +560,12 @@ socket.emit('update teams name', teamNames);
       score.changeAmount = parseInt(actionObj[1]);
     }
     if (action == 'set score'){
-      score.values[msg.team] = msg.score;
-      io.sockets.emit('update scores', score);
+      setScoreValue(msg.team, msg.score);
+      if (msg.onlyEmitToSlaves == true){
+        io.sockets.emit('update slave scores', score);
+      }else{
+        io.sockets.emit('update scores', score);
+      }
     }
     if (action == 'settle score'){
       _settleScoreFromQuestion('a');
@@ -610,27 +606,72 @@ socket.emit('update teams name', teamNames);
     updateDataInDatabase();
   });
 
+  socket.on('config control',function(msg, callback){
+    console.log('config control', msg);
+    var actionObj = msg.action.split(':');
+    var action = actionObj[0];
+
+    if (action == 'set team name'){
+      var team = actionObj[1];
+      var name = msg.value;
+      if (name !== null){
+        console.log('set team name', team, name);
+        teamNames[team] = name;
+        setXpressionField('name_'+team, name, function(){
+
+        })
+        io.sockets.emit('update teams name', teamNames);
+      }
+    }
+    if (action == 'set team score'){
+      var team = actionObj[1];
+      if (msg.value !== null && msg.value !==''){
+        var newScore = parseInt(msg.value);
+        console.log('set team score', team, newScore);
+        setScoreValue(team, newScore);
+        setXpressionField('score_'+team, newScore, function(){
+
+        });
+        io.sockets.emit('update scores', score);
+      }
+
+    }
+    updateDataInDatabase();
+  });
+
+
   _settleScoreFromQuestion = function(team){
     if (question.answers[team] == question.question.correct_answer){
-      score.values[team] = score.values[team] + score.changeAmount;
+      setScoreValue(team, score.values[team] + score.changeAmount);
     }else{
-      score.values[team] = score.values[team] - score.changeAmount;
+      setScoreValue(team, score.values[team] - score.changeAmount);
     }
   }
 
   _settleScoreFromChallenge = function(team){
     if (toggables['challenge-inc-score-'+team] == true){
-      score.values[team] = score.values[team] + toggables['challenge-set-score-change-amount'];
+      setScoreValue(team, score.values[team] + toggables['challenge-set-score-change-amount']);
     }
   }
 
   _swapScoreFromChallenge = function(thief,victim,amount){
-    score.values[thief] = score.values[thief] + amount;
-    score.values[victim] = score.values[victim] - amount;
+    var victimsRemainingAmount = score.values[victim] - 100;
+    if (victimsRemainingAmount < 0){
+      amount = amount + victimsRemainingAmount;
+    }
+
+    setScoreValue(thief, score.values[thief] + amount);
+    setScoreValue(victim, score.values[victim] - amount);
   }
 });
 
-
+var setScoreValue = function(team, value){
+  if (value < 0){
+    score.values[team] = 0;
+  }else{
+    score.values[team] = value;
+  }
+}
 
 
 // QLAB REMOTE
@@ -733,3 +774,33 @@ var runMaCmd = function(cmd){
   	} catch (err) {console.log(err); };
   }
 }
+
+
+
+
+// FETCH INITIAL STATE FROM DB
+getXpressionField('name_a', function(teamName){
+  teamNames['a'] = teamName;
+})
+getXpressionField('name_b', function(teamName){
+  teamNames['b'] = teamName;
+})
+getXpressionField('name_c', function(teamName){
+  teamNames['c'] = teamName;
+})
+getXpressionField('name_d', function(teamName){
+  teamNames['d'] = teamName;
+})
+
+getXpressionField('score_a', function(score){
+  setScoreValue('a', parseInt(score));
+})
+getXpressionField('score_b', function(score){
+  setScoreValue('b', parseInt(score));
+})
+getXpressionField('score_c', function(score){
+  setScoreValue('c', parseInt(score));
+})
+getXpressionField('score_d', function(score){
+  setScoreValue('d', parseInt(score));
+})

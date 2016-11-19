@@ -4,12 +4,21 @@
 		return (Math.random().toString(36)+'00000000000000000').slice(2, N+2);
 	}
 
+	var is_touch_device = function() {
+	  return 'ontouchstart' in window        // works on most browsers
+	      || navigator.maxTouchPoints;       // works on IE10/11 and Surface
+	};
+
+	// Set the click trigger according to screen-type
+	window.touchdown = is_touch_device() ? 'touchstart' : 'click';
+
 
 	document.title="SHOW+CTRL";
 	var socket = io.connect();
 
-	//Make global for debugging
+	//Make the socket global for debugging
 	window.socket = socket;
+
 
 	socket.on('toggable change', function(msg){
 		console.log('toggable change recieved', msg);
@@ -51,42 +60,6 @@
 
 
 
-
-
-		/*
-		$("#"+containerId).children().unbind('click').bind('click', function(button){
-			if ($(this).data('cue') != null){
-				socket.emit('run cue', $(this).data('cue'), function(res){
-					console.log(res);
-				});
-			}
-			if ($(this).data('qlab') != null){
-				socket.emit('run qlab cmd', $(this).data('qlab'), function(res){
-					console.log(res);
-				});
-			}
-			if ($(this).data('section') != null){
-				if (item.target){
-					openItemByName($(this).data('section'), item.target);
-				}else{
-					openItemByName($(this).data('section'), 'buttons');
-				}
-			}
-			if ($(this).data('vote') != null){
-				socket.emit('vote', $(this).data('vote'), function(res){
-					console.log(res);
-					alert('Takk for stemmen!');
-				});
-				$("#header").html('Takk for stemmen. Knappene vil dukke opp igjen neste gang det skal stemmes.');
-
-			}
-			if ($(this).data('votecontrol') != null){
-				socket.emit('vote control', {action: $(this).data('votecontrol') }, function(res){
-					console.log(res);
-				});
-			}
-		});
-		*/
 
 		$("#"+containerId).children().unbind(window.touchdown || 'touchstart').bind(window.touchdown || 'touchstart', function(button){
 			if ($(this).data('cue') != null){
@@ -148,6 +121,15 @@
 					// DO TOGGLE STUFF HERE
 				}
 			}
+			if ($(this).data('configcontrol') != null){
+				console.log('running config control');
+				socket.emit('config control', {
+					action: $(this).data('configcontrol'),
+					value: prompt('Enter new value:')
+				}, function(res){
+					console.log(res);
+				});
+			}
 			if ($(this).data('toggableid') != null){
 				if ($(this).data('toggablegroup') != null){
 					socket.emit('toggable group change', {
@@ -161,6 +143,9 @@
 				}
 			}
 		});
+
+		socket.emit('request toggables', null);
+
 		openItemIndex = index;
 	}
 
@@ -186,6 +171,7 @@
 			(typeof data.voteControl != 'undefined' ? 'data-votecontrol="'+data.voteControl+'" ' : '') +
 			(typeof data.quizControl != 'undefined' ? 'data-quizcontrol="'+data.quizControl+'" ' : '') +
 			(typeof data.scoreControl != 'undefined' ? 'data-scorecontrol="'+data.scoreControl+'" ' : '') +
+			(typeof data.configControl != 'undefined' ? 'data-configcontrol="'+data.configControl+'" ' : '') +
 			(typeof data.answer != 'undefined' ? 'data-answer="'+data.answer+'" ' : '') +
 			(typeof data.team != 'undefined' ? 'data-team="'+data.team+'" ' : '') +
 			'>'+(typeof data.label != 'undefined' ? '<span>'+data.label+'</span>' : '')+'</div>';
@@ -202,6 +188,7 @@
 			(typeof data.voteControl != 'undefined' ? 'data-votecontrol="'+data.voteControl+'" ' : '') +
 			(typeof data.quizControl != 'undefined' ? 'data-quizcontrol="'+data.quizControl+'" ' : '') +
 			(typeof data.scoreControl != 'undefined' ? 'data-scorecontrol="'+data.scoreControl+'" ' : '') +
+			(typeof data.configControl != 'undefined' ? 'data-configcontrol="'+data.configControl+'" ' : '') +
 			(typeof data.answer != 'undefined' ? 'data-answer="'+data.answer+'" ' : '') +
 			(typeof data.team != 'undefined' ? 'data-team="'+data.team+'" ' : '') +
 			'>'+(typeof data.label != 'undefined' ? data.label : '')+'</div>';
@@ -254,16 +241,16 @@
 		});
 
 		socket.on('close votes',function(){
-			$("#header").html('Avstemmingen er avsluttet. Når du kan stemme igjen vil to knapper dukke opp!');
+			$("#header").html('Avstemmingen er avsluttet!');
 		});
 
 		socket.emit('have i voted',null,function(res){
 			if (res){
-				$("#header").html('Takk for stemmen! Når du kan stemme vil to knapper dukke opp!');
+				$("#header").html('Takk for stemmen!');
 			}else{
 				socket.emit('should i vote',null,function(res){
 					if (!res){
-						$("#header").html('Velkommen! Når du kan stemme vil to knapper dukke opp!');
+						$("#header").html('Velkommen! Når du kan stemme knapper dukke opp!');
 					}
 				});
 			}
@@ -285,7 +272,7 @@
 			});
 
 			socket.on('close question',function(){
-				$("#header").html('Oppgaven er avsluttet. Når du kan svare igjen vil to knappene dukke opp!');
+				$("#header").html('Oppgaven er avsluttet!');
 			});
 
 			socket.emit('have i answered', team,function(res){
@@ -631,33 +618,46 @@
 
 
 	var setTeamScore = function(score, team){
+
+		// Limit new value to zero or above;
+		if (score.values[team] < 0){
+			score.values[team] = 0;
+		}
+
+		// Only run if value has changed
 		if (score.values[team] != window.lastScoreValue[team]){
+
+
+
+			// Tint to green if positive change
 			if (score.values[team] > window.lastScoreValue[team]){
 				$('#team-'+team).find('.overlay').addClass('green-tint');
 				setTimeout(function(){
-					$("#overlay").removeClass('green-tint');
+					$('#team-'+team).find('.overlay').removeClass('red-tint').removeClass('green-tint');
 				},2000);
 			}
 
+			// Tint to red if negative change
 			if (score.values[team] < window.lastScoreValue[team]){
 				$('#team-'+team).find('.overlay').addClass('red-tint');
 				setTimeout(function(){
-					$('#team-'+team).find('.overlay').removeClass('red-tint');
+					$('#team-'+team).find('.overlay').removeClass('red-tint').removeClass('green-tint');
 				},2000);
 			}
 
+			// Shake name when score is changed
 			$('#team-'+team).find('.scorecontainer').effect( "shake", {
 				direction: 'up',
 				distance: 15,
 				times: 6
 			});
 
-			var animationLength = (window.lastScoreValue - score.values[team]) * 5;
-			if (animationLength < 0){
-				animationLength  = animationLength *-1;
-			}
+			// Calculate animation speed
+			var animationLength = (window.lastScoreValue[team] - score.values[team]) * 5;
+			if (animationLength < 0){ animationLength = animationLength *-1; }
+			if (animationLength > 3000){ animationLength = 3000; }
 
-			$('#team-'+team).find('.scorevalue').prop('number', window.lastScoreValue).animateNumber(
+			$('#team-'+team).find('.scorevalue').prop('number', window.lastScoreValue[team]).animateNumber(
 				{
 					number: score.values[team],
 				},
@@ -667,23 +667,48 @@
 		window.lastScoreValue[team] = score.values[team];
 	}
 
+	var decScoreByOne = function(team, belowZeroCallback){
+		var oldVal = parseInt($("#team-"+team).find('.scorevalue').text());
+		var newVal = oldVal - 1;
+		var lowerThanZero = newVal < 0;
+		if (!lowerThanZero){
+			$("#team-"+team).find('.scorevalue').html( newVal	);
+		}else{
+			belowZeroCallback(team);
+		}
+	}
+
 	var openAllTaps = function(){
 		$(".overlay").addClass('blue-tint');
 
-		window.tapInterval = setInterval( function(){
-			$("#team-a").find('.scorevalue').html( 	parseInt($("#team-a").find('.scorevalue').text()) - 1);
-			$("#team-b").find('.scorevalue').html( 	parseInt($("#team-b").find('.scorevalue').text()) - 1);
-			$("#team-c").find('.scorevalue').html( 	parseInt($("#team-c").find('.scorevalue').text()) - 1);
-			$("#team-d").find('.scorevalue').html( 	parseInt($("#team-d").find('.scorevalue').text()) - 1);
+		// If propogated, stop previous interval
+		clearInterval(window.tapInterval['a']);
+		clearInterval(window.tapInterval['b']);
+		clearInterval(window.tapInterval['c']);
+		clearInterval(window.tapInterval['d']);
+
+		// Start tap
+		window.tapInterval['a'] = setInterval( function(){
+			decScoreByOne('a', /* or */ closeTap);
+		}, 100);
+		window.tapInterval['b'] = setInterval( function(){
+			decScoreByOne('b', /* or */ closeTap);
+		}, 100);
+		window.tapInterval['c'] = setInterval( function(){
+			decScoreByOne('c', /* or */ closeTap);
+		}, 100);
+		window.tapInterval['d'] = setInterval( function(){
+			decScoreByOne('d', /* or */ closeTap);
 		}, 100);
 	}
 
 	var closeTap = function(team){
-		clearInterval(window.tapInterval);
+		clearInterval(window.tapInterval[team]);
 		//window.tapInterval = null;
 		window.lastScoreValue[team] = parseInt($("#team-"+team).find('.scorevalue').text());
 		if (typeof isSlave != 'undefined'){
 			socket.emit('score control', {
+				onlyEmitToSlaves: true,
 				action:'set score',
 				team: team,
 				score: window.lastScoreValue[team]
@@ -696,9 +721,8 @@
 	if (typeof scoredisplaysingle != 'undefined'){
 		window.lastScoreValue = {};
 		window.lastScoreValue[team] = 0;
-		window.tapInterval = null;
-		window.lastTapScore = {};
-		window.lastTapScore[team] = 0;
+		window.tapInterval = {};
+		window.lastScoreValue[team] = null;
 
 		$("#scoredisplay").html('<div id="team-'+team+'" class="teamcanvas-singlescreen"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue">0</div></div></div>');
 
@@ -709,6 +733,12 @@
 
 		socket.on('update scores', function(score){
 			setTeamScore(score, team);
+		});
+
+		socket.on('update slave scores', function(score){
+			if (typeof isSlave != 'undefined'){
+				setTeamScore(score, team);
+			}
 		});
 
 		socket.on('open tap', function(msg){
@@ -741,19 +771,18 @@
 			'c': 0,
 			'd': 0
 		};
-		window.lastTapScore = {
-			'a': 0,
-			'b': 0,
-			'c': 0,
-			'd': 0
+		window.tapInterval = {
+			'a': null,
+			'b': null,
+			'c': null,
+			'd': null
 		};
-		window.tapInterval = null;
 
 
-		$("#scoredisplay").append('<div id="team-a" class="teamcanvas-multiscreen"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue">0</div></div></div>')
-											.append('<div id="team-b" class="teamcanvas-multiscreen"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue">0</div></div></div>')
-											.append('<div id="team-c" class="teamcanvas-multiscreen"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue">0</div></div></div>')
-											.append('<div id="team-d" class="teamcanvas-multiscreen"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue">0</div></div></div>');
+		$("#scoredisplay").append('<div id="team-a" class="teamcanvas-multiscreen"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue overlay">0</div></div></div>')
+											.append('<div id="team-b" class="teamcanvas-multiscreen"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue overlay">0</div></div></div>')
+											.append('<div id="team-c" class="teamcanvas-multiscreen"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue overlay">0</div></div></div>')
+											.append('<div id="team-d" class="teamcanvas-multiscreen"><div class="overlay"></div><div class="scorecontainer"><div class="teamname"></div><div class="scorevalue overlay">0</div></div></div>');
 
 		socket.on('update teams name', function(teamNames){
 			console.log('update teams name', teamNames);
@@ -764,7 +793,10 @@
 		});
 
 		socket.on('update scores', function(score){
-			setTeamScore(score, team);
+			setTeamScore(score, 'a');
+			setTeamScore(score, 'b');
+			setTeamScore(score, 'c');
+			setTeamScore(score, 'd');
 		});
 
 		socket.on('open tap', function(msg){

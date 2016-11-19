@@ -143,6 +143,17 @@
 			{ label: 'CLOSE TAP', scoreControl: 'close tap', style: 'red-button'  }
 		];
 
+		var configControl = [
+			{ label: 'set A name', configControl: 'set team name:a', style: 'grey-button' },
+			{ label: 'set B name', configControl: 'set team name:b', style: 'grey-button' },
+			{ label: 'set C name', configControl: 'set team name:c', style: 'grey-button' },
+			{ label: 'set D name', configControl: 'set team name:d', style: 'grey-button' },
+			{ label: 'set A score', configControl: 'set team score:a', style: 'grey-button clear-both' },
+			{ label: 'set B score', configControl: 'set team score:b', style: 'grey-button' },
+			{ label: 'set C score', configControl: 'set team score:c', style: 'grey-button' },
+			{ label: 'set D score', configControl: 'set team score:d', style: 'grey-button' },
+		];
+
 		var statusBoard = [
 			{ type: 'container', id: 'teamstatus', style:'clear-both' }
 		];
@@ -205,6 +216,11 @@
 					{
 						label: 'SCORE',
 						section: 'score control',
+						style:'dark-button wide'
+					},
+					{
+						label: 'CONFIG',
+						section: 'config control',
 						style:'dark-button wide'
 					}
 				]
@@ -279,10 +295,15 @@
 				content: []
 					.concat(scoreControl)
 			},
+			{
+				name: 'config control',
+				parent: 'main',
+				content: []
+					.concat(configControl)
+			},
 		];
 		matrixAccess = true;
-		window.touchdown = 'click';
-		//window.touchdown = 'touchstart';
+
 	</script>
 	<script src="/quizmaster-client.js"></script>
 </body>
