@@ -64,15 +64,15 @@
 		];
 
 		var challengeControl = [
-			{ label: 'A+', cue: 9, scoreControl: 'challenge toggle inc score:a', toggableid: 'challenge-inc-score-a' },
-			{ label: 'B+', cue: 9, scoreControl: 'challenge toggle inc score:b', toggableid: 'challenge-inc-score-b' },
-			{ label: 'C+', cue: 9, scoreControl: 'challenge toggle inc score:c', toggableid: 'challenge-inc-score-c' },
-			{ label: 'D+', cue: 9, scoreControl: 'challenge toggle inc score:d', toggableid: 'challenge-inc-score-d' },
+			{ label: 'A+', scoreControl: 'challenge toggle inc score:a', toggableid: 'challenge-inc-score-a' },
+			{ label: 'B+', scoreControl: 'challenge toggle inc score:b', toggableid: 'challenge-inc-score-b' },
+			{ label: 'C+', scoreControl: 'challenge toggle inc score:c', toggableid: 'challenge-inc-score-c' },
+			{ label: 'D+', scoreControl: 'challenge toggle inc score:d', toggableid: 'challenge-inc-score-d' },
 			{ label: 'CHANGE 1', toggableid: '1', toggablegroup: 'challenge-set-score-change-amount', style: 'break-line' },
 			{ label: 'CHANGE 100', toggableid: '100', toggablegroup: 'challenge-set-score-change-amount' },
 			{ label: 'CHANGE 200', toggableid: '200', toggablegroup: 'challenge-set-score-change-amount' },
 			{ label: 'CHANGE 300', toggableid: '300', toggablegroup: 'challenge-set-score-change-amount' },
-			{ label: 'PUSH', scoreControl: 'challenge settle score', style: 'blue-button' },
+			{ label: 'PUSH', cue: 9, scoreControl: 'challenge settle score', style: 'blue-button' },
 		];
 
 		var duelControl = [
