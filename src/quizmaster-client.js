@@ -687,19 +687,22 @@
 		clearInterval(window.tapInterval['c']);
 		clearInterval(window.tapInterval['d']);
 
+		// Speed of tap // lower is faster // default: 100
+		var msBetweenEachPoint = 75;
+
 		// Start tap
 		window.tapInterval['a'] = setInterval( function(){
 			decScoreByOne('a', /* or */ closeTap);
-		}, 100);
+		}, msBetweenEachPoint);
 		window.tapInterval['b'] = setInterval( function(){
 			decScoreByOne('b', /* or */ closeTap);
-		}, 100);
+		}, msBetweenEachPoint);
 		window.tapInterval['c'] = setInterval( function(){
 			decScoreByOne('c', /* or */ closeTap);
-		}, 100);
+		}, msBetweenEachPoint);
 		window.tapInterval['d'] = setInterval( function(){
 			decScoreByOne('d', /* or */ closeTap);
-		}, 100);
+		}, msBetweenEachPoint);
 	}
 
 	var closeTap = function(team){

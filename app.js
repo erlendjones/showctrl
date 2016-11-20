@@ -16,6 +16,10 @@ var runMa = false;
 var runCarbonite = true;
 var runXpression= true;
 var runQlab = true;
+var runQlab2 = true;
+var runQlab3 = false;
+var runQlab4 = false;
+var runQlab5 = false;
 
 //// CONFIGURATIONS ////
 const config = {
@@ -40,6 +44,18 @@ const config = {
   },
   qlabConnection: {
     host:     '192.168.8.138'
+  },
+  qlabConnection2: {
+    host:     '192.168.8.120'
+  },
+  qlabConnection3: {
+    host:     '192.168.8.000'
+  },
+  qlabConnection4: {
+    host:     '192.168.8.000'
+  },
+  qlabConnection5: {
+    host:     '192.168.8.000'
   }
 }
 
@@ -703,6 +719,34 @@ if (runQlab){
 	} catch (err) { console.log(err); };
 }
 
+if (runQlab2){
+	try {
+		var qlabClient2 = new osc.Client(config.qlabConnection2.host || '192.168.1.7', config.qlabConnection2.port || 53000);
+		console.log('QLAB2 Connected');
+	} catch (err) { console.log(err); };
+}
+
+if (runQlab3){
+	try {
+		var qlabClient3 = new osc.Client(config.qlabConnection3.host || '192.168.1.7', config.qlabConnection3.port || 53000);
+		console.log('QLAB3 Connected');
+	} catch (err) { console.log(err); };
+}
+
+if (runQlab4){
+	try {
+		var qlabClient4 = new osc.Client(config.qlabConnection4.host || '192.168.1.7', config.qlabConnection4.port || 53000);
+		console.log('QLAB4 Connected');
+	} catch (err) { console.log(err); };
+}
+
+if (runQlab5){
+	try {
+		var qlabClient5 = new osc.Client(config.qlabConnection5.host || '192.168.1.7', config.qlabConnection5.port || 53000);
+		console.log('QLAB5 Connected');
+	} catch (err) { console.log(err); };
+}
+
 // MA REMOTE
 if (runMa){
 	var maClient = new ma2console({
@@ -752,10 +796,42 @@ var runXpressionCmd = function(cmd){
 
 // RUN CUE COMMANDS
 var runQlabCmd = function(cmd){
-	console.log('Run qlab cmd: '+cmd);
 	if (runQlab){
+    console.log('Run qlab cmd: '+cmd);
 		try {
 			qlabClient.send(cmd, 200, function (msg) {
+
+			});
+		} catch (err) {console.log(err); };
+	}
+  if (runQlab2){
+    console.log('Run qlab2 cmd: '+cmd);
+		try {
+			qlabClient2.send(cmd, 200, function (msg) {
+
+			});
+		} catch (err) {console.log(err); };
+	}
+  if (runQlab3){
+    console.log('Run qlab3 cmd: '+cmd);
+		try {
+			qlabClient3.send(cmd, 200, function (msg) {
+
+			});
+		} catch (err) {console.log(err); };
+	}
+  if (runQlab4){
+    console.log('Run qlab4 cmd: '+cmd);
+		try {
+			qlabClient4.send(cmd, 200, function (msg) {
+
+			});
+		} catch (err) {console.log(err); };
+	}
+  if (runQlab5){
+    console.log('Run qlab5 cmd: '+cmd);
+		try {
+			qlabClient5.send(cmd, 200, function (msg) {
 
 			});
 		} catch (err) {console.log(err); };
@@ -768,6 +844,38 @@ var runCue = function(cueNumber){
 		try {
       console.log('run qlab cmd ','/cue/'+cueNumber+'/start');
 			qlabClient.send('/cue/'+cueNumber+'/start', 200, function (msg) {
+
+			});
+		} catch (err) {console.log(err); };
+	}
+  if (runQlab2){
+		try {
+      console.log('run qlab2 cmd ','/cue/'+cueNumber+'/start');
+			qlabClient2.send('/cue/'+cueNumber+'/start', 200, function (msg) {
+
+			});
+		} catch (err) {console.log(err); };
+	}
+  if (runQlab3){
+		try {
+      console.log('run qlab3 cmd ','/cue/'+cueNumber+'/start');
+			qlabClient3.send('/cue/'+cueNumber+'/start', 200, function (msg) {
+
+			});
+		} catch (err) {console.log(err); };
+	}
+  if (runQlab4){
+		try {
+      console.log('run qlab4 cmd ','/cue/'+cueNumber+'/start');
+			qlabClient4.send('/cue/'+cueNumber+'/start', 200, function (msg) {
+
+			});
+		} catch (err) {console.log(err); };
+	}
+  if (runQlab5){
+		try {
+      console.log('run qlab5 cmd ','/cue/'+cueNumber+'/start');
+			qlabClient5.send('/cue/'+cueNumber+'/start', 200, function (msg) {
 
 			});
 		} catch (err) {console.log(err); };
