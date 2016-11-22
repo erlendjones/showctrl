@@ -607,7 +607,7 @@ io.on('connection', function (socket) {
       _settleScoreFromQuestion('b');
       _settleScoreFromQuestion('c');
       _settleScoreFromQuestion('d');
-      console.log('question settle scores to',score)
+      console.log('question settle scores to',score);
       io.sockets.emit('update scores', score);
     }
     if (action == 'robbery execute'){
