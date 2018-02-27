@@ -5,7 +5,7 @@ A very basic, but flexible, trigger-suite for controlling multiple devices durin
 <br>
 1. Install babel-cli globally (npm i babel-cli -g)<br>
 2. Run "npm i" and "npm build" <br>
-3. Configure the connections in the app.js<br>
+3. Configure the connections in the app.js-file<br>
 4. Run node app<br>
 5. Enter localhost:8080/script-buttons.html<br>
 6. Control the devices from the interface<br>
