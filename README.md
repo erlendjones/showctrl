@@ -3,8 +3,8 @@
 A very basic, but flexible, trigger-suite for controlling multiple devices during a live television or stage-show.
 
 <br>
-1. Install babel-cli (npm i babel-cli)<br>
-2. Run npm build<br>
+1. Install babel-cli globally (npm i babel-cli -g)<br>
+2. Run "npm i" and "npm build" <br>
 3. Configure the connections in the app.js<br>
 4. Run node app<br>
 5. Enter localhost:8080/script-buttons.html<br>
