@@ -92,7 +92,7 @@ function setXpressionField(field, value, callback){
 
 function getXpressionField(field, callback){
   mysqlCon.query('SELECT * FROM xpressiondata WHERE key_value = ?', [ field ], function(err, res){
-    if (typeof callback == 'function' && typeof res[0] !== 'undefined' && typeof res[0].value !== 'undefined'){
+    if (typeof callback == 'function' && res && typeof res[0] !== 'undefined' && typeof res[0].value !== 'undefined'){
       callback(res[0].value);
     };
   })
